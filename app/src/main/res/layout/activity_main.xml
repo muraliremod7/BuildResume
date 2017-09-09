@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:background="@color/colorPrimary"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.jntuh.buildresume.MainActivity"
+    android:orientation="vertical">
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="60dp">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:text="Build Resume"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textSize="25dp"
+                    android:textColor="@color/textColor"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="#ffff"></View>
+                <TextView
+                    android:textSize="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:text="Make Easy To Preapare Your Profile"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textColor="@color/textColor"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+    <LinearLayout
+        android:layout_marginTop="40dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+        <Button
+            android:padding="5dp"
+            android:id="@+id/createResume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Create New Resume"
+            android:textColor="@color/textColor"
+            android:textStyle="bold"
+            android:background="@drawable/buttonstyle"
+            android:drawableLeft="@drawable/createresume"
+            android:drawableRight="@drawable/rightarraow"/>
+
+        <Button
+            android:padding="5dp"
+            android:layout_marginTop="10dp"
+            android:id="@+id/savedResumes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Saved Resumes"
+            android:textColor="@color/textColor"
+            android:textStyle="bold"
+            android:background="@drawable/buttonstyle"
+            android:drawableLeft="@drawable/savedresumes"
+            android:drawableRight="@drawable/rightarraow"/>
+    </LinearLayout>
+</LinearLayout>
