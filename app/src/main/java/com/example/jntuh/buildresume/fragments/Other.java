@@ -24,7 +24,8 @@ public class Other extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_other, container, false);
+        View itemView = inflater.inflate(R.layout.fragment_other, container, false);
+        return itemView;
     }
 
 }

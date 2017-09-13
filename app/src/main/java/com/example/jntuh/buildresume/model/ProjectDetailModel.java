@@ -6,11 +6,12 @@ package com.example.jntuh.buildresume.model;
 
 public class ProjectDetailModel{
 
-    public ProjectDetailModel(String projecttitle, String projectdesc, String yourrole, String duration, String teammem) {
+    public ProjectDetailModel(String projecttitle, String projectdesc, String yourrole, String durationfrom,String durationto, String teammem) {
         this.projecttitle = projecttitle;
         this.projectdesc = projectdesc;
         this.yourrole = yourrole;
-        this.duration = duration;
+        this.durationfrom = durationfrom;
+        this.durationto = durationto;
         this.teammem = teammem;
     }
 
@@ -38,12 +39,12 @@ public class ProjectDetailModel{
         this.yourrole = yourrole;
     }
 
-    public String getDuration() {
-        return duration;
+    public String getDurationfrom() {
+        return durationfrom;
     }
 
-    public void setDuration(String duration) {
-        this.duration = duration;
+    public void setDurationfrom(String durationfrom) {
+        this.durationfrom = durationfrom;
     }
 
     public String getTeammem() {
@@ -54,7 +55,21 @@ public class ProjectDetailModel{
         this.teammem = teammem;
     }
 
-    public String projecttitle,projectdesc,yourrole,duration,teammem;
+    public String projecttitle;
+    public String projectdesc;
+    public String yourrole;
+    public String durationfrom;
+
+    public String getDurationto() {
+        return durationto;
+    }
+
+    public void setDurationto(String durationto) {
+        this.durationto = durationto;
+    }
+
+    public String durationto;
+    public String teammem;
     public ProjectDetailModel(){
     }
 

@@ -5,10 +5,13 @@ import android.content.Context;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -17,27 +20,29 @@ import android.widget.Toast;
 import com.example.jntuh.buildresume.R;
 import com.example.jntuh.buildresume.fragments.EducationQualification;
 import com.example.jntuh.buildresume.model.ProjectDetailModel;
+import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * Created by JNTUH on 10-09-2017.
  */
 
 public class ProjectDetailsListview extends ArrayAdapter<ProjectDetailModel>{
-    TextView projecttitle, projectdesc, yourrole, duration, teammem;
+    TextView projecttitle, projectdesc, yourrole, durationfrom, durationto, teammem;
     public final Activity activity;
     public int currentposition;
     public ArrayList<ProjectDetailModel> detailModels;
-    RadioButton radioButton1,radioButton2;
+    String toworkk = null;
     ProjectDetailModel projectDetailModel = null;
-    EducationQualification educationQualification;
 
     public ProjectDetailsListview(Activity activity, ArrayList<ProjectDetailModel> peoplelist) {
         super(activity,R.layout.addprojectslistrow,peoplelist);
         this.activity = activity;
         this.detailModels = peoplelist;
-        this.educationQualification = educationQualification;
+
     }
 
     @Override
@@ -67,7 +72,8 @@ public class ProjectDetailsListview extends ArrayAdapter<ProjectDetailModel>{
         projecttitle = (TextView) convertview.findViewById(R.id.projecttitlelistrow);
         projectdesc = (TextView)convertview.findViewById(R.id.projectdetailslistrow);
         yourrole = (TextView)convertview.findViewById(R.id.yourolelistrow);
-        duration = (TextView)convertview.findViewById(R.id.durationlistrow);
+        durationfrom = (TextView)convertview.findViewById(R.id.durationfromlistrow);
+        durationto = (TextView)convertview.findViewById(R.id.durationtolistrow);
         teammem = (TextView)convertview.findViewById(R.id.noofteammemlistrow);
 
         projectDetailModel =(ProjectDetailModel) getItem(position);
@@ -75,7 +81,8 @@ public class ProjectDetailsListview extends ArrayAdapter<ProjectDetailModel>{
         projecttitle.setText(projectDetailModel.getProjecttitle());
         projectdesc.setText(projectDetailModel.getProjectdesc());
         yourrole.setText(projectDetailModel.getYourrole());
-        duration.setText(projectDetailModel.getDuration());
+        durationfrom.setText(projectDetailModel.getDurationfrom());
+        durationto.setText(projectDetailModel.getDurationto());
         teammem.setText(projectDetailModel.getTeammem());
 
         edit.setOnClickListener(new View.OnClickListener() {
@@ -84,22 +91,101 @@ public class ProjectDetailsListview extends ArrayAdapter<ProjectDetailModel>{
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 LayoutInflater inflater = activity.getLayoutInflater();
                 final View dialogView = inflater.inflate(R.layout.addprojects, null);
-                builder.setTitle("Add Education Details");
+                builder.setTitle("Add Project Details");
                 builder.setView(dialogView);
                 final AlertDialog alertDialog = builder.create();
 
-                final TextInputLayout projectTitle = (TextInputLayout)dialogView.findViewById(R.id.projectname);
-                final TextInputLayout projectDesc = (TextInputLayout)dialogView.findViewById(R.id.projectdetails);
-                final TextInputLayout yourRole = (TextInputLayout)dialogView.findViewById(R.id.yourrole);
-                final TextInputLayout duratIon = (TextInputLayout)dialogView.findViewById(R.id.durationofproject);
-                final TextInputLayout teamMem = (TextInputLayout)dialogView.findViewById(R.id.teammembers);
+                final TextInputLayout projecttitle = (TextInputLayout)dialogView.findViewById(R.id.projectname);
+                final TextInputLayout projectdesc = (TextInputLayout)dialogView.findViewById(R.id.projectdetails);
+                final TextInputLayout yourrole = (TextInputLayout)dialogView.findViewById(R.id.yourrole);
+                final TextInputLayout durationfrom = (TextInputLayout)dialogView.findViewById(R.id.durationfrom);
+                final TextInputLayout durationto = (TextInputLayout)dialogView.findViewById(R.id.durationto);
+                final TextInputLayout teammem = (TextInputLayout)dialogView.findViewById(R.id.teammembers);
+                final CheckBox checkBox = (CheckBox)dialogView.findViewById(R.id.checkBoxpd);
+                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        if(b){
+                            Toast.makeText(getContext(), "checked",
+                                    Toast.LENGTH_SHORT).show();
+                            durationto.getEditText().setText("Present");
 
-                projectTitle.getEditText().setText(((ProjectDetailModel) detailModels.get(position)).getProjecttitle());
-                projectDesc.getEditText().setText(((ProjectDetailModel) detailModels.get(position)).getProjectdesc());
-                yourRole.getEditText().setText(((ProjectDetailModel) detailModels.get(position)).getYourrole());
-                duratIon.getEditText().setText(((ProjectDetailModel) detailModels.get(position)).getDuration());
-                teamMem.getEditText().setText(((ProjectDetailModel) detailModels.get(position)).getTeammem());
+                        }else{
+                            durationto.getEditText().setText(" ");
 
+                            Toast.makeText(getContext(), "unchecked",
+                                    Toast.LENGTH_SHORT).show();
+                            durationto.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                                @Override
+                                public void onFocusChange(View v, boolean hasFocus) {
+                                    if(hasFocus) {
+                                        // Show your calender here
+                                        YearMonthPickerDialog yearMonthPickerDialog = new YearMonthPickerDialog(getContext(), new YearMonthPickerDialog.OnDateSetListener() {
+                                            @Override
+                                            public void onYearMonthSet(int year, int month) {
+                                                Calendar calendar = Calendar.getInstance();
+                                                calendar.set(Calendar.YEAR, year);
+                                                calendar.set(Calendar.MONTH, month);
+
+                                                SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
+
+                                                durationto.getEditText().setText(dateFormat.format(calendar.getTime()));
+                                            }
+                                        });
+                                        yearMonthPickerDialog.show();
+                                    } else {
+                                        // Hide your calender here
+                                    }
+                                }
+                            });
+                            toworkk = durationto.getEditText().getText().toString();
+                        }
+                    }
+                });
+                //work from and work to functionalities ===========================================================
+                durationfrom.getEditText().setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(MotionEvent.ACTION_UP == event.getAction()){
+                            YearMonthPickerDialog yearMonthPickerDialog = new YearMonthPickerDialog(getContext(), new YearMonthPickerDialog.OnDateSetListener() {
+                                @Override
+                                public void onYearMonthSet(int year, int month) {
+                                    Calendar calendar = Calendar.getInstance();
+                                    calendar.set(Calendar.YEAR, year);
+                                    calendar.set(Calendar.MONTH, month);
+
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
+
+                                    durationfrom.getEditText().setText(dateFormat.format(calendar.getTime()));
+                                }
+                            });
+                            yearMonthPickerDialog.show();
+                        }
+                        return false;
+                    }
+                });
+
+                durationto.getEditText().setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if(MotionEvent.ACTION_UP == event.getAction()){
+                            YearMonthPickerDialog yearMonthPickerDialog = new YearMonthPickerDialog(getContext(), new YearMonthPickerDialog.OnDateSetListener() {
+                                @Override
+                                public void onYearMonthSet(int year, int month) {
+                                    Calendar calendar = Calendar.getInstance();
+                                    calendar.set(Calendar.YEAR, year);
+                                    calendar.set(Calendar.MONTH, month);
+
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
+
+                                    durationto.getEditText().setText(dateFormat.format(calendar.getTime()));
+                                }
+                            });
+                            yearMonthPickerDialog.show();
+                        }
+                        return false;
+                    }
+                });
                 Button save = (Button)dialogView.findViewById(R.id.save_project);
                 Button cancel = (Button)dialogView.findViewById(R.id.cancel_project);
                 save.setOnClickListener(new View.OnClickListener() {
@@ -107,15 +193,16 @@ public class ProjectDetailsListview extends ArrayAdapter<ProjectDetailModel>{
                     public void onClick(View view) {
 
                         try{
-                            String qualification = projectTitle.getEditText().getText().toString();
-                            String institutE = projectDesc.getEditText().getText().toString();
-                            String borunI = yourRole.getEditText().getText().toString();
-                            String percga = duratIon.getEditText().getText().toString();
-                            String payear = teamMem.getEditText().getText().toString();
-                            if(qualification==null||qualification==""||institutE==""||institutE==null||borunI==null||borunI==""||percga==null||percga==""||payear==null||payear==""){
+                            String projectTitle = projecttitle.getEditText().getText().toString();
+                            String projectDesc = projectdesc.getEditText().getText().toString();
+                            String yourRole = yourrole.getEditText().getText().toString();
+                            String percga = durationfrom.getEditText().getText().toString();
+                            String durationTo = durationto.getEditText().getText().toString();
+                            String teamMem = teammem.getEditText().getText().toString();
+                            if(projectTitle==null||projectTitle==""||projectDesc==""||projectDesc==null||teamMem==null||teamMem==""||yourRole==null||yourRole==""||percga==null||percga==""){
                                 Toast.makeText(getContext(),"Should Be Fill All Fields",Toast.LENGTH_LONG).show();
                             }else{
-//                                educationQualification.saveDetails(projecttitle,institutE,borunI,percga,payear,percentageType,graduationType);
+                                //projectdetailssaveDetails(projectTitle,projectDesc,yourRole,percga,durationTo,teamMem);
                                 alertDialog.dismiss();
                             }
                         }catch (NullPointerException e){

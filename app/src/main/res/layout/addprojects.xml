@@ -36,11 +36,12 @@
             android:inputType="textMultiLine" />
 
     </android.support.design.widget.TextInputLayout>
+
     <android.support.design.widget.TextInputLayout
         android:id="@+id/yourrole"
-        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp">
 
         <EditText
             android:id="@+id/yourroleedit"
@@ -50,22 +51,47 @@
             android:inputType="text" />
 
     </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/durationofproject"
+    <CheckBox
+        android:layout_marginTop="10dp"
+        android:id="@+id/checkBoxpd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Still Working On This Project?" />
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_weight="1">
-
-        <EditText
-            android:id="@+id/durationofprojectedit"
+        android:orientation="horizontal">
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/durationfrom"
+            android:layout_marginTop="5dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Duration Of Project"
-            android:inputType="text" />
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
 
-    </android.support.design.widget.TextInputLayout>
+            <EditText
+                android:id="@+id/durationfromedit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Duration From"
+                android:inputType="text" />
+
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/durationto"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/durationtoedit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Duration To"
+                android:inputType="text" />
+
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
 
     <android.support.design.widget.TextInputLayout
             android:id="@+id/teammembers"
