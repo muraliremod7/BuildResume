@@ -1,10 +1,8 @@
-package com.example.jntuh.buildresume.fragments;
+package com.example.jntuh.buildresume.adapter;
 
-import android.os.Bundle;
-import android.support.annotation.IdRes;
-import android.support.design.widget.FloatingActionButton;
+import android.app.Activity;
+import android.content.Context;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -12,14 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jntuh.buildresume.R;
-import com.example.jntuh.buildresume.adapter.EducationListview;
+import com.example.jntuh.buildresume.fragments.EducationQualification;
 import com.example.jntuh.buildresume.model.EducationModel;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
@@ -27,41 +25,72 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+/**
+ * Created by JNTUH on 10-09-2017.
+ */
 
-public class EducationQualification extends Fragment implements View.OnClickListener{
-        public FloatingActionButton actionButton;
+public class EducationListview extends ArrayAdapter<EducationModel>{
+    TextView qualification, institute, board, percentagetype,percentage,graduationtype, yearofpassing;
+    public final Activity activity;
+    public int currentposition;
+    public ArrayList<EducationModel> educationmodel;
     RadioButton radioButton1,radioButton2;
-    ArrayList<EducationModel> models;
-    public ListView listView;
-    EducationListview edulistview;
-    public EducationQualification() {
-        // Required empty public constructor
+    EducationModel educationModel = null;
+    EducationQualification educationQualification;
+
+    public EducationListview(Activity activity, ArrayList<EducationModel> peoplelist,EducationQualification educationQualification) {
+        super(activity,R.layout.addeducationlistrow,peoplelist);
+        this.activity = activity;
+        this.educationmodel = peoplelist;
+        this.educationQualification = educationQualification;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public int getCount() {
+        return educationmodel.size();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View itemView = inflater.inflate(R.layout.fragment_education_qualification, container, false);
-        actionButton = (FloatingActionButton)itemView.findViewById(R.id.addeducation);
-        actionButton.setOnClickListener(this);
-        models = new ArrayList<EducationModel>();
-         edulistview = new EducationListview(getActivity(),models,this);
-        listView = (ListView)itemView.findViewById(R.id.edulistview);
-        return itemView;
+    public EducationModel getItem(int location) {
+        return educationmodel.get(location);
     }
 
     @Override
-    public void onClick(final View view) {
-        switch (view.getId()){
-            case R.id.addeducation:
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(final int position, View convertview, ViewGroup parent) {
+        LayoutInflater inflater = activity.getLayoutInflater();
+        if (inflater == null)
+            currentposition = position;
+            inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        convertview= inflater.inflate(R.layout.addeducationlistrow, null, true);
+        ImageView edit = (ImageView)convertview.findViewById(R.id.editeducation);
+        ImageView delete = (ImageView)convertview.findViewById(R.id.deleteeducation);
+        qualification = (TextView) convertview.findViewById(R.id.qualificationlistrow);
+        institute = (TextView)convertview.findViewById(R.id.institutelistrow);
+        board = (TextView)convertview.findViewById(R.id.boardlistrow);
+        yearofpassing = (TextView)convertview.findViewById(R.id.yearofpassinglistrow);
+        percentagetype = (TextView)convertview.findViewById(R.id.percentagetypelistrow);
+        percentage = (TextView)convertview.findViewById(R.id.percentagelistrow);
+        graduationtype = (TextView)convertview.findViewById(R.id.graduationtypelistrow);
+
+        educationModel =(EducationModel) getItem(position);
+
+        qualification.setText(educationModel.getQualification());
+        institute.setText(educationModel.getInstitute());
+        board.setText(educationModel.getBoardUniversity());
+        yearofpassing.setText(educationModel.getPassingYear());
+        percentagetype.setText(educationModel.getGradingType());
+        percentage.setText(educationModel.getPercentage());
+        graduationtype.setText(educationModel.getGraduationType());
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                LayoutInflater inflater = getActivity().getLayoutInflater();
+                LayoutInflater inflater = activity.getLayoutInflater();
                 final View dialogView = inflater.inflate(R.layout.addeducation, null);
                 builder.setTitle("Add Education Details");
                 builder.setView(dialogView);
@@ -93,6 +122,12 @@ public class EducationQualification extends Fragment implements View.OnClickList
                         return false;
                     }
                 });
+                qualificatioN.getEditText().setText(((EducationModel) educationmodel.get(position)).getQualification());
+                institute.getEditText().setText(((EducationModel) educationmodel.get(position)).getInstitute());
+                boruni.getEditText().setText(((EducationModel) educationmodel.get(position)).getBoardUniversity());
+                percentagecgpa.getEditText().setText(((EducationModel) educationmodel.get(position)).getPercentage());
+                passingyear.getEditText().setText(((EducationModel) educationmodel.get(position)).getPassingYear());
+
                 Button save = (Button)dialogView.findViewById(R.id.save_education);
                 Button cancel = (Button)dialogView.findViewById(R.id.cancel_education);
                 save.setOnClickListener(new View.OnClickListener() {
@@ -101,8 +136,8 @@ public class EducationQualification extends Fragment implements View.OnClickList
                         int selectedId = dialogRadioGroup .getCheckedRadioButtonId();
                         int selectedId1 = dialogRadioGroup1 .getCheckedRadioButtonId();
                         // find the radio button by returned id
-                         radioButton1 = (RadioButton) dialogView.findViewById(selectedId);
-                         radioButton2 = (RadioButton) dialogView.findViewById(selectedId1);
+                        radioButton1 = (RadioButton) dialogView.findViewById(selectedId);
+                        radioButton2 = (RadioButton) dialogView.findViewById(selectedId1);
                         try{
                             String percentageType = radioButton1.getText().toString();
                             String graduationType = radioButton2.getText().toString();
@@ -114,7 +149,7 @@ public class EducationQualification extends Fragment implements View.OnClickList
                             if(percentageType==null||percentageType==""||graduationType==null||graduationType==""||qualification==null||qualification==""||institutE==""||institutE==null||borunI==null||borunI==""||percga==null||percga==""||payear==null||payear==""){
                                 Toast.makeText(getContext(),"Should Be Fill All Fields",Toast.LENGTH_LONG).show();
                             }else{
-                                saveDetails(qualification,institutE,borunI,percga,payear,percentageType,graduationType);
+//                                educationQualification.saveDetails(jobrole,institutE,borunI,percga,payear,percentageType,graduationType);
                                 alertDialog.dismiss();
                             }
                         }catch (NullPointerException e){
@@ -129,15 +164,18 @@ public class EducationQualification extends Fragment implements View.OnClickList
                     }
                 });
                 alertDialog.show();
-                break;
-        }
+            }
+        });
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getContext(),"Deleted",Toast.LENGTH_LONG).show();
+                educationmodel.remove(educationmodel.get(currentposition));
+                notifyDataSetChanged();
+            }
+        });
+        return convertview;
     }
 
-    public void saveDetails(String qualification, String institutE, String borunI, String percga, String payear, String percentageType, String graduationType) {
-        EducationModel educationModel = new EducationModel(qualification,institutE,borunI,percentageType,percga,graduationType,payear);
-        models.add(educationModel);
-        listView.setAdapter(edulistview);
-        edulistview.notifyDataSetInvalidated();
 
-    }
- }
+}

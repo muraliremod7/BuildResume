@@ -1,0 +1,149 @@
+<LinearLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/addEducation"
+    android:layout_marginTop="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/qualification"
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/qualificationedit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Qualification"
+            android:inputType="text" />
+
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/institute"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/instituteedit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Institute"
+            android:inputType="text" />
+
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/boarduniversity"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/boarduniversityedit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Board/University"
+            android:inputType="text" />
+
+    </android.support.design.widget.TextInputLayout>
+    <RadioGroup
+        android:id="@+id/percentype"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/radioButton1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Percentage" />
+
+            <RadioButton
+                android:layout_marginLeft="10dp"
+                android:id="@+id/radioButton2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CGPA" />
+    </RadioGroup>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/percentagecgpa"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/percentagecgpaedit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Percentage/CGPA"
+            android:inputType="numberDecimal" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <RadioGroup
+        android:id="@+id/graduationtype"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Graduated" />
+
+        <RadioButton
+            android:id="@+id/radioButton4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Pusuing" />
+    </RadioGroup>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/passingyear"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/passingyearedit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Passing Year"
+            android:inputType="number" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal">
+        <Button
+            android:id="@+id/cancel_education"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:background="@android:color/transparent"
+            android:textColor="@color/colorAccent" />
+        <Button
+            android:id="@+id/save_education"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:background="@android:color/transparent"
+            android:textColor="@color/colorAccent" />
+    </LinearLayout>
+</LinearLayout>
