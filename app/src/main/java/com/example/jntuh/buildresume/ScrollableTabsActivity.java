@@ -47,10 +47,18 @@ import io.realm.RealmResults;
 
 
 public class ScrollableTabsActivity extends AppCompatActivity {
-
+    public static String id;
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    ContactInformation information = new ContactInformation();
+    EducationQualification qualification = new EducationQualification();
+    WorkExperience experience = new WorkExperience();
+    Projects projects = new Projects();
+    Other other = new Other();
+    References references = new References();
+    CareerObjective careerObjective = new CareerObjective();
+    Declaration declaration = new Declaration();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,17 +69,17 @@ public class ScrollableTabsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
-
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
-
         Intent intent = getIntent();
-        String id = intent.getStringExtra("id");
+        id = intent.getStringExtra("id");
+                   if(id==null){
 
-        RealmController controller = new RealmController(getApplication());
-        SaveDataModel saveDataModels = controller.getBook(id);
+        }else{
+                       viewPager = (ViewPager) findViewById(R.id.viewpager);
+                       setupViewPager(viewPager);
+
+                       tabLayout = (TabLayout) findViewById(R.id.tabs);
+                       tabLayout.setupWithViewPager(viewPager);
+        }
 
 
     }
@@ -139,14 +147,7 @@ public class ScrollableTabsActivity extends AppCompatActivity {
     }
 
     private void saveData() {
-        ContactInformation information = new ContactInformation();
-        EducationQualification qualification = new EducationQualification();
-        WorkExperience experience = new WorkExperience();
-        Projects projects = new Projects();
-        Other other = new Other();
-        References references = new References();
-        CareerObjective careerObjective = new CareerObjective();
-        Declaration declaration = new Declaration();
+
         try{
             SaveDataModel book = new SaveDataModel();
             long i= 1 + System.currentTimeMillis();//L is the suffix for long

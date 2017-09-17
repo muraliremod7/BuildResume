@@ -28,7 +28,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.jntuh.buildresume.R;
+import com.example.jntuh.buildresume.ScrollableTabsActivity;
 import com.example.jntuh.buildresume.Utility;
+import com.example.jntuh.buildresume.model.SaveDataModel;
+import com.example.jntuh.buildresume.realm.RealmController;
 import com.github.gcacace.signaturepad.views.SignaturePad;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
@@ -83,6 +86,26 @@ public class ContactInformation extends Fragment implements View.OnClickListener
         pincode = (TextInputLayout)itemView.findViewById(R.id.pincode);
         gender = (TextInputLayout)itemView.findViewById(R.id.gender);
 
+        String itemId = ScrollableTabsActivity.id;
+
+        if(itemId == null){
+
+        }else{
+            RealmController controller = new RealmController(getActivity().getApplication());
+            SaveDataModel saveDataModels = controller.getBook(itemId);
+            profile.getEditText().setText(saveDataModels.getProfilename());
+            name.getEditText().setText(saveDataModels.getName());
+            email.getEditText().setText(saveDataModels.getEmail());
+            mobile.getEditText().setText(saveDataModels.getMobile());
+            address.getEditText().setText(saveDataModels.getAddress());
+            dateofbirth.getEditText().setText(saveDataModels.getDateofbirth());
+            maritialstatus.getEditText().setText(saveDataModels.getMarriagestatus());
+            city.getEditText().setText(saveDataModels.getCity());
+            state.getEditText().setText(saveDataModels.getState());
+            country.getEditText().setText(saveDataModels.getCountry());
+            pincode.getEditText().setText(saveDataModels.getPincode());
+            gender.getEditText().setText(saveDataModels.getGender());
+        }
         uploadphoto = (ImageView)itemView.findViewById(R.id.uploadPhoto);
         uploadphoto.setOnClickListener(this);
         uploadsign = (ImageView)itemView.findViewById(R.id.uploadSign);
