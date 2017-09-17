@@ -1,34 +1,59 @@
-
-<LinearLayout
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/addEducation"
-    android:layout_marginTop="10dp"
+<android.support.v4.widget.NestedScrollView
+    android:layout_height="2000dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
+    android:fillViewport="true"
     xmlns:android="http://schemas.android.com/apk/res/android">
-   <Button
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:background="@android:color/transparent"
-       android:textColor="@color/colorAccent"
-       android:text="Add Skills"/>
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/edulistview"
-        android:layout_marginTop="10dp"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:textColor="@color/colorAccent"
-        android:text="Add Skills"/>
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/edulistvie"
-        android:layout_marginTop="10dp"/>
-</LinearLayout>
+ <LinearLayout
+     android:id="@+id/addEducation"
+     android:layout_marginTop="10dp"
+     android:layout_width="match_parent"
+     android:layout_height="wrap_content"
+     android:orientation="vertical"
+     android:layout_marginLeft="10dp"
+     android:layout_marginRight="10dp">
+  <Button
+      android:id="@+id/addskills"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textColor="@color/colorAccent"
+      android:text="Add Skills"/>
+  <ListView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/addskillslistview"
+      android:layout_marginTop="10dp"/>
+  <Button
+      android:id="@+id/addachivements"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textColor="@color/colorAccent"
+      android:text="Add Achievments"/>
+  <ListView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/addachivementslistview"
+      android:layout_marginTop="10dp"/>
+  <Button
+      android:id="@+id/addhobbys"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textColor="@color/colorAccent"
+      android:text="Add Hobby's"/>
+  <ListView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/addhobbyslistview"
+      android:layout_marginTop="10dp"/>
+  <Button
+      android:id="@+id/addlan"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textColor="@color/colorAccent"
+      android:text="Add Languages"/>
+  <ListView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:id="@+id/addlanlistview"
+      android:layout_marginTop="10dp"/>
+ </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

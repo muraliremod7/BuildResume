@@ -1,10 +1,12 @@
 package com.example.jntuh.buildresume.model;
 
+import io.realm.RealmObject;
+
 /**
  * Created by JNTUH on 10-09-2017.
  */
 
-public class WorkExperienceModel{
+public class WorkExperienceModel extends RealmObject {
 
     public WorkExperienceModel(String jobrole, String jobdescription, String companyname, String fromwork, String towork) {
         this.jobrole = jobrole;
@@ -54,7 +56,7 @@ public class WorkExperienceModel{
         this.towork = towork;
     }
 
-    String jobrole,jobdescription,companyname,fromwork,towork;
+    private String jobrole,jobdescription,companyname,fromwork,towork;
     public WorkExperienceModel(){
     }
 

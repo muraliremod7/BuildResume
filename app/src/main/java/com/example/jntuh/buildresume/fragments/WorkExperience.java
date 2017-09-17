@@ -1,7 +1,5 @@
 package com.example.jntuh.buildresume.fragments;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
@@ -14,18 +12,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.example.jntuh.buildresume.R;
 import com.example.jntuh.buildresume.adapter.WorkExperienceListview;
-import com.example.jntuh.buildresume.model.EducationModel;
 import com.example.jntuh.buildresume.model.WorkExperienceModel;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
-import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,8 +28,7 @@ import java.util.Calendar;
 
 public class WorkExperience extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
-    RadioButton radioButton1,radioButton2;
-    ArrayList<WorkExperienceModel> models;
+    public ArrayList<WorkExperienceModel> experienceModels;
     public ListView listView;
     WorkExperienceListview workExperienceListview;
     String toworkk = null;
@@ -55,8 +49,8 @@ public class WorkExperience extends Fragment implements View.OnClickListener{
         View itemview = inflater.inflate(R.layout.fragment_work_experience, container, false);
         actionButton = (FloatingActionButton)itemview.findViewById(R.id.addworkexperience);
         actionButton.setOnClickListener(this);
-        models = new ArrayList<WorkExperienceModel>();
-        workExperienceListview = new WorkExperienceListview(getActivity(),models);
+        experienceModels = new ArrayList<WorkExperienceModel>();
+        workExperienceListview = new WorkExperienceListview(getActivity(), experienceModels);
         listView = (ListView)itemview.findViewById(R.id.worklistview);
         return itemview;
     }
@@ -200,7 +194,7 @@ public class WorkExperience extends Fragment implements View.OnClickListener{
 
     private void workexperiencesaveDetails(String jobtitle, String jobdes, String comname, String fromwork, String toworkk) {
         WorkExperienceModel experienceModel = new WorkExperienceModel(jobtitle,jobdes,comname,fromwork,toworkk);
-        models.add(experienceModel);
+        experienceModels.add(experienceModel);
         listView.setAdapter(workExperienceListview);
         workExperienceListview.notifyDataSetInvalidated();
     }

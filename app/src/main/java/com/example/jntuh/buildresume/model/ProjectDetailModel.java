@@ -1,10 +1,12 @@
 package com.example.jntuh.buildresume.model;
 
+import io.realm.RealmObject;
+
 /**
  * Created by JNTUH on 10-09-2017.
  */
 
-public class ProjectDetailModel{
+public class ProjectDetailModel extends RealmObject {
 
     public ProjectDetailModel(String projecttitle, String projectdesc, String yourrole, String durationfrom,String durationto, String teammem) {
         this.projecttitle = projecttitle;
@@ -55,10 +57,10 @@ public class ProjectDetailModel{
         this.teammem = teammem;
     }
 
-    public String projecttitle;
-    public String projectdesc;
-    public String yourrole;
-    public String durationfrom;
+    private String projecttitle;
+    private String projectdesc;
+    private String yourrole;
+    private String durationfrom;
 
     public String getDurationto() {
         return durationto;
@@ -68,8 +70,8 @@ public class ProjectDetailModel{
         this.durationto = durationto;
     }
 
-    public String durationto;
-    public String teammem;
+    private String durationto;
+    private String teammem;
     public ProjectDetailModel(){
     }
 

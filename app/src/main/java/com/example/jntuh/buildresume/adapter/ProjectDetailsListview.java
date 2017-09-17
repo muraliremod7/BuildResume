@@ -2,6 +2,7 @@ package com.example.jntuh.buildresume.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -222,9 +223,25 @@ public class ProjectDetailsListview extends ArrayAdapter<ProjectDetailModel>{
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(),"Deleted",Toast.LENGTH_LONG).show();
-                detailModels.remove(detailModels.get(currentposition));
-                notifyDataSetChanged();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyAlertDialogStyle);
+                builder.setTitle("Confirmation Delete !");
+                builder.setMessage("Surely You Want Delete This Details");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(getContext(),"Deleted",Toast.LENGTH_LONG).show();
+                        detailModels.remove(detailModels.get(currentposition));
+                        notifyDataSetChanged();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.show();
+
             }
         });
         return convertview;

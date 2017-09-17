@@ -29,7 +29,7 @@ import java.util.Calendar;
 
 public class Projects extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
-    ArrayList<ProjectDetailModel> detailModels;
+    public ArrayList<ProjectDetailModel> detailModels;
     public ListView listView;
     ProjectDetailsListview detailsListview;
     String toworkk = null;

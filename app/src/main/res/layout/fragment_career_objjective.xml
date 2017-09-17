@@ -2,24 +2,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
-    tools:context="info.androidhive.materialtabs.fragments.TwoFragment">
-
+    android:paddingBottom="50dp"
+    tools:context="info.androidhive.materialtabs.fragments.EightFragment">
     <android.support.design.widget.TextInputLayout
         android:id="@+id/careerobjective"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
-        android:layout_marginBottom="80dp"
         android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/careerobjectiveedit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Career Objective"
+            android:hint="Declaration"
             android:inputType="textMultiLine" />
 
     </android.support.design.widget.TextInputLayout>
-
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/adddcareerobjective"
+        android:src="@drawable/plus"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="10dp"/>
 </RelativeLayout>

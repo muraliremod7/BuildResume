@@ -44,8 +44,8 @@ import java.util.Calendar;
 
 
 public class ContactInformation extends Fragment implements View.OnClickListener{
-    public TextInputLayout profile,name,email,mobile,address,dateofbirth,maritialstatus,city,state,country,pincode,gender;
-    public ImageView uploadphoto,uploadsign;
+    public static TextInputLayout profile,name,email,mobile,address,dateofbirth,maritialstatus,city,state,country,pincode,gender;
+    public static ImageView uploadphoto,uploadsign;
     private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -478,7 +478,7 @@ public class ContactInformation extends Fragment implements View.OnClickListener
             }
         }
 
-        uploadsign.setImageBitmap(bm);
+        uploadphoto.setImageBitmap(bm);
     }
 
 

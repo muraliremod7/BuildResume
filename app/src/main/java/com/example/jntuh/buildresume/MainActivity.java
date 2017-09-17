@@ -10,13 +10,15 @@ import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    Button create,save;
+    Button create,save,created;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         create = (Button)findViewById(R.id.createResume);
         create.setOnClickListener(this);
+        created = (Button)findViewById(R.id.createdResumes);
+        created.setOnClickListener(this);
         save = (Button)findViewById(R.id.savedResumes);
         save.setOnClickListener(this);
     }
@@ -28,6 +30,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.createResume:
                 Intent cr = new Intent(MainActivity.this,ScrollableTabsActivity.class);
                 startActivity(cr);
+                break;
+            case R.id.createdResumes:
+                Intent cdrs = new Intent(MainActivity.this,ShowDataActivity.class);
+                startActivity(cdrs);
                 break;
             case R.id.savedResumes:
                 break;

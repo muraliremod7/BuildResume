@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class References extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
-    ArrayList<ReferencesModel> detailModels;
+    public ArrayList<ReferencesModel> referencesModels;
     public ListView listView;
     ReferencesListview detailsListview;
     public References() {
@@ -40,8 +40,8 @@ public class References extends Fragment implements View.OnClickListener{
         View itemView = inflater.inflate(R.layout.fragment_references, container, false);
         actionButton = (FloatingActionButton)itemView.findViewById(R.id.addrefe);
         actionButton.setOnClickListener(this);
-        detailModels = new ArrayList<ReferencesModel>();
-        detailsListview = new ReferencesListview(getActivity(),detailModels);
+        referencesModels = new ArrayList<ReferencesModel>();
+        detailsListview = new ReferencesListview(getActivity(), referencesModels);
         listView = (ListView)itemView.findViewById(R.id.addreflistview);
         return itemView;
     }
@@ -99,7 +99,7 @@ public class References extends Fragment implements View.OnClickListener{
     }
     private void projectdetailssaveDetails(String projectTitle, String projectDesc, String yourRole, String duratIon, String teamMem) {
         ReferencesModel projectDetailModel = new ReferencesModel(projectTitle,projectDesc,yourRole,duratIon,teamMem);
-        detailModels.add(projectDetailModel);
+        referencesModels.add(projectDetailModel);
         listView.setAdapter(detailsListview);
         detailsListview.notifyDataSetInvalidated();
     }

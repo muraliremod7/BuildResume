@@ -1,12 +1,14 @@
 package com.example.jntuh.buildresume.model;
 
+import io.realm.RealmObject;
+
 /**
  * Created by JNTUH on 10-09-2017.
  */
 
-public class EducationModel {
+public class EducationModel extends RealmObject {
 
-    String Qualification,Institute,BoardUniversity,GradingType,Percentage,GraduationType,PassingYear;
+    private String Qualification,Institute,BoardUniversity,GradingType,Percentage,GraduationType,PassingYear;
     public EducationModel(){
     }
     public EducationModel(String qualification, String institute, String boardUniversity, String gradingType, String percentage, String graduationType, String passingYear) {

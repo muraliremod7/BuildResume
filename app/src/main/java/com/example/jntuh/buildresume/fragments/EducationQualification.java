@@ -29,9 +29,10 @@ import java.util.Calendar;
 
 
 public class EducationQualification extends Fragment implements View.OnClickListener{
-        public FloatingActionButton actionButton;
+    public FloatingActionButton actionButton;
     RadioButton radioButton1,radioButton2;
-    ArrayList<EducationModel> models;
+    public ArrayList<EducationModel> models;
+    public static ArrayList<String> strings;
     public ListView listView;
     EducationListview edulistview;
     public EducationQualification() {
@@ -50,9 +51,11 @@ public class EducationQualification extends Fragment implements View.OnClickList
         View itemView = inflater.inflate(R.layout.fragment_education_qualification, container, false);
         actionButton = (FloatingActionButton)itemView.findViewById(R.id.addeducation);
         actionButton.setOnClickListener(this);
-        models = new ArrayList<EducationModel>();
-         edulistview = new EducationListview(getActivity(),models,this);
+        models = new ArrayList<>();
+        edulistview = new EducationListview(getActivity(),models,this);
         listView = (ListView)itemView.findViewById(R.id.edulistview);
+        strings = new ArrayList<>();
+
         return itemView;
     }
 

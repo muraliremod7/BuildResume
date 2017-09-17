@@ -2,6 +2,7 @@ package com.example.jntuh.buildresume.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import com.example.jntuh.buildresume.R;
 import com.example.jntuh.buildresume.fragments.EducationQualification;
 import com.example.jntuh.buildresume.model.EducationModel;
+import com.example.jntuh.buildresume.service.AlertDailogManager;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
 import java.text.SimpleDateFormat;
@@ -37,6 +39,7 @@ public class EducationListview extends ArrayAdapter<EducationModel>{
     RadioButton radioButton1,radioButton2;
     EducationModel educationModel = null;
     EducationQualification educationQualification;
+    AlertDailogManager dailogManager = new AlertDailogManager();
 
     public EducationListview(Activity activity, ArrayList<EducationModel> peoplelist,EducationQualification educationQualification) {
         super(activity,R.layout.addeducationlistrow,peoplelist);
@@ -169,9 +172,24 @@ public class EducationListview extends ArrayAdapter<EducationModel>{
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(),"Deleted",Toast.LENGTH_LONG).show();
-                educationmodel.remove(educationmodel.get(currentposition));
-                notifyDataSetChanged();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyAlertDialogStyle);
+                builder.setTitle("Confirmation Delete !");
+                builder.setMessage("Surely You Want Delete This Details");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(getContext(),"Deleted",Toast.LENGTH_LONG).show();
+                        educationmodel.remove(educationmodel.get(currentposition));
+                        notifyDataSetChanged();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.show();
             }
         });
         return convertview;
