@@ -99,7 +99,7 @@
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal">
         <Button
-            android:id="@+id/cancel_education"
+            android:id="@+id/cancel_work"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
@@ -107,7 +107,7 @@
             android:background="@android:color/transparent"
             android:textColor="@color/colorAccent" />
         <Button
-            android:id="@+id/save_education"
+            android:id="@+id/save_work"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"

@@ -17,9 +17,12 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.example.jntuh.buildresume.R;
+import com.example.jntuh.buildresume.ScrollableTabsActivity;
 import com.example.jntuh.buildresume.adapter.ProjectDetailsListview;
 import com.example.jntuh.buildresume.model.ProjectDetailModel;
+import com.example.jntuh.buildresume.model.SaveDataModel;
 import com.example.jntuh.buildresume.model.WorkExperienceModel;
+import com.example.jntuh.buildresume.realm.RealmController;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
 import java.text.SimpleDateFormat;
@@ -29,7 +32,7 @@ import java.util.Calendar;
 
 public class Projects extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
-    public ArrayList<ProjectDetailModel> detailModels;
+    public static ArrayList<ProjectDetailModel> detailModels=null;
     public ListView listView;
     ProjectDetailsListview detailsListview;
     String toworkk = null;
@@ -52,6 +55,18 @@ public class Projects extends Fragment implements View.OnClickListener{
         detailModels = new ArrayList<ProjectDetailModel>();
         detailsListview = new ProjectDetailsListview(getActivity(),detailModels);
         listView = (ListView)itemView.findViewById(R.id.projectlistview);
+        String itemId = ScrollableTabsActivity.id;
+        if(itemId==null){
+
+        }else {
+            RealmController controller = new RealmController(getActivity().getApplication());
+            SaveDataModel saveDataModels = null;
+            saveDataModels = controller.getBook(itemId);
+            detailModels = new ArrayList<>(saveDataModels.getProjectDetailModels());
+            detailsListview = new ProjectDetailsListview(getActivity(), detailModels);
+            listView.setAdapter(detailsListview);
+            detailsListview.notifyDataSetInvalidated();
+        };
         return itemView;
     }
 
@@ -195,6 +210,7 @@ public class Projects extends Fragment implements View.OnClickListener{
     private void projectdetailssaveDetails(String projectTitle, String projectDesc, String yourRole, String duratIon,String durationto, String teamMem) {
         ProjectDetailModel projectDetailModel = new ProjectDetailModel(projectTitle,projectDesc,yourRole,duratIon,durationto,teamMem);
         detailModels.add(projectDetailModel);
+        detailsListview = new ProjectDetailsListview(getActivity(),detailModels);
         listView.setAdapter(detailsListview);
         detailsListview.notifyDataSetInvalidated();
     }

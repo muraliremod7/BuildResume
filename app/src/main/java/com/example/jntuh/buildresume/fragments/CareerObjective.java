@@ -12,11 +12,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.example.jntuh.buildresume.R;
+import com.example.jntuh.buildresume.ScrollableTabsActivity;
+import com.example.jntuh.buildresume.model.SaveDataModel;
+import com.example.jntuh.buildresume.realm.RealmController;
 
 
 public class CareerObjective extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
-    public TextInputLayout textInputLayout;
+    public static TextInputLayout textInputLayout =null;
     public CareerObjective() {
         // Required empty public constructor
     }
@@ -34,6 +37,14 @@ public class CareerObjective extends Fragment implements View.OnClickListener{
         actionButton = (FloatingActionButton)itemView.findViewById(R.id.adddcareerobjective);
         actionButton.setOnClickListener(this);
         textInputLayout = (TextInputLayout)itemView.findViewById(R.id.careerobjective);
+        String itemId = ScrollableTabsActivity.id;
+        if(itemId==null){
+
+        }else{
+            RealmController controller = new RealmController(getActivity().getApplication());
+            SaveDataModel saveDataModels = controller.getBook(itemId);
+            textInputLayout.getEditText().setText(saveDataModels.getCareerobjective().toString());
+        }
         return itemView;
     }
 

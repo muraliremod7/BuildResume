@@ -17,20 +17,27 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.example.jntuh.buildresume.R;
+import com.example.jntuh.buildresume.ScrollableTabsActivity;
 import com.example.jntuh.buildresume.adapter.WorkExperienceListview;
+import com.example.jntuh.buildresume.model.SaveDataModel;
 import com.example.jntuh.buildresume.model.WorkExperienceModel;
+import com.example.jntuh.buildresume.realm.RealmController;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 
 public class WorkExperience extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
-    public ArrayList<WorkExperienceModel> experienceModels;
+    public static ArrayList<WorkExperienceModel> experienceModels;
     public ListView listView;
-    WorkExperienceListview workExperienceListview;
+    public WorkExperienceListview workExperienceListview;
     String toworkk = null;
     public TextInputLayout fromWork,toWork;
     public WorkExperience() {
@@ -47,13 +54,28 @@ public class WorkExperience extends Fragment implements View.OnClickListener{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View itemview = inflater.inflate(R.layout.fragment_work_experience, container, false);
-        actionButton = (FloatingActionButton)itemview.findViewById(R.id.addworkexperience);
-        actionButton.setOnClickListener(this);
-        experienceModels = new ArrayList<WorkExperienceModel>();
-        workExperienceListview = new WorkExperienceListview(getActivity(), experienceModels);
         listView = (ListView)itemview.findViewById(R.id.worklistview);
+        String itemId = ScrollableTabsActivity.id;
+        actionButton = (FloatingActionButton)itemview.findViewById(R.id.addworkexperience);
+        experienceModels = new ArrayList<>();
+        workExperienceListview = new WorkExperienceListview(getActivity(), experienceModels);
+        actionButton.setOnClickListener(this);
+        if(itemId==null){
+
+        }
+        else{
+
+            RealmController controller = new RealmController(getActivity().getApplication());
+            SaveDataModel saveDataModels = controller.getBook(itemId);
+            experienceModels = new ArrayList<>(saveDataModels.getExperienceModels());
+            workExperienceListview = new WorkExperienceListview(getActivity(), experienceModels);
+            listView.setAdapter(workExperienceListview);
+            workExperienceListview.notifyDataSetInvalidated();
+        }
         return itemview;
     }
+
+
 
     @Override
     public void onClick(View view) {
@@ -62,7 +84,7 @@ public class WorkExperience extends Fragment implements View.OnClickListener{
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 final View dialogView = inflater.inflate(R.layout.addworkexperience, null);
-                builder.setTitle("Add Education Details");
+                builder.setTitle("Add Experience Details");
                 builder.setView(dialogView);
                 final AlertDialog alertDialog = builder.create();
 
@@ -82,8 +104,6 @@ public class WorkExperience extends Fragment implements View.OnClickListener{
                             toWork.getEditText().setText("Present");
 
                         }else{
-                            toWork.getEditText().setText(" ");
-
                             Toast.makeText(getContext(), "unchecked",
                                     Toast.LENGTH_SHORT).show();
                             toWork.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -158,8 +178,8 @@ public class WorkExperience extends Fragment implements View.OnClickListener{
                     }
                 });
 
-                Button save = (Button)dialogView.findViewById(R.id.save_education);
-                Button cancel = (Button)dialogView.findViewById(R.id.cancel_education);
+                Button save = (Button)dialogView.findViewById(R.id.save_work);
+                Button cancel = (Button)dialogView.findViewById(R.id.cancel_work);
                 save.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -173,7 +193,7 @@ public class WorkExperience extends Fragment implements View.OnClickListener{
                             if(jobtitle==null||jobtitle==""||jobdes==""||jobdes==null||comname==null||comname==""||fromwork==null||fromwork==""||towork==null||towork==""){
                                 Toast.makeText(getContext(),"Should Be Fill All Fields",Toast.LENGTH_LONG).show();
                             }else{
-                                workexperiencesaveDetails(jobtitle,jobdes,comname,fromwork,toworkk);
+                                workexperiencesaveDetails(jobtitle,jobdes,comname,fromwork,towork);
                                 alertDialog.dismiss();
                             }
                         }catch (NullPointerException e){
@@ -193,9 +213,16 @@ public class WorkExperience extends Fragment implements View.OnClickListener{
     }
 
     private void workexperiencesaveDetails(String jobtitle, String jobdes, String comname, String fromwork, String toworkk) {
-        WorkExperienceModel experienceModel = new WorkExperienceModel(jobtitle,jobdes,comname,fromwork,toworkk);
+        WorkExperienceModel experienceModel = new WorkExperienceModel();
+        experienceModel.setJobtitle(jobtitle);
+        experienceModel.setJobrole(jobtitle);
+        experienceModel.setJobdescription(jobdes);
+        experienceModel.setCompanyname(comname);
+        experienceModel.setFromwork(fromwork);
+        experienceModel.setTowork(toworkk);
         experienceModels.add(experienceModel);
         listView.setAdapter(workExperienceListview);
-        workExperienceListview.notifyDataSetInvalidated();
+        workExperienceListview.notifyDataSetChanged();
     }
+
 }

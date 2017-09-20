@@ -29,24 +29,25 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import io.realm.RealmList;
+
 /**
  * Created by JNTUH on 10-09-2017.
  */
 
 public class WorkExperienceListview extends ArrayAdapter<WorkExperienceModel>{
-    TextView jobrole, jobdescription, companyname, fromwork, towork;
+    public TextView jobtitle, jobdescription, companyname, fromwork, towork;
     public final Activity activity;
     public int currentposition;
     public ArrayList<WorkExperienceModel> experienceModels;
-    WorkExperienceModel workExperienceModel = null;
-    WorkExperience educationQualification;
+    public WorkExperienceModel workExperienceModel;
     String toworkk = null;
 
     public WorkExperienceListview(Activity activity, ArrayList<WorkExperienceModel> models) {
         super(activity,R.layout.addworkexperiencelistrow,models);
         this.activity = activity;
         this.experienceModels = models;
-        this.educationQualification = educationQualification;
+
     }
 
     @Override
@@ -70,11 +71,10 @@ public class WorkExperienceListview extends ArrayAdapter<WorkExperienceModel>{
         if (inflater == null)
             currentposition = position;
             inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertview= inflater.inflate(R.layout.addworkexperiencelistrow, null, true);
+        convertview= inflater.inflate(R.layout.addworkexperiencelistrow, null,true);
         ImageView edit = (ImageView)convertview.findViewById(R.id.editworkexperience);
         ImageView delete = (ImageView)convertview.findViewById(R.id.deleteworkexperience);
-
-        jobrole = (TextView) convertview.findViewById(R.id.jobtitlelistrow);
+        jobtitle = (TextView)convertview.findViewById(R.id.jobtitlelistrow);
         jobdescription = (TextView)convertview.findViewById(R.id.jobdescriptionlistrow);
         companyname = (TextView)convertview.findViewById(R.id.companynamelistrow);
         fromwork = (TextView)convertview.findViewById(R.id.fromworklistrow);
@@ -82,7 +82,7 @@ public class WorkExperienceListview extends ArrayAdapter<WorkExperienceModel>{
 
         workExperienceModel =(WorkExperienceModel) getItem(position);
 
-        jobrole.setText(workExperienceModel.getJobrole());
+        jobtitle.setText(workExperienceModel.getJobtitle());
         jobdescription.setText(workExperienceModel.getJobdescription());
         companyname.setText(workExperienceModel.getCompanyname());
         fromwork.setText(workExperienceModel.getFromwork());
@@ -94,7 +94,7 @@ public class WorkExperienceListview extends ArrayAdapter<WorkExperienceModel>{
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 LayoutInflater inflater = activity.getLayoutInflater();
                 final View dialogView = inflater.inflate(R.layout.addworkexperience, null);
-                builder.setTitle("Add Education Details");
+                builder.setTitle("Add Experience Details");
                 builder.setView(dialogView);
                 final AlertDialog alertDialog = builder.create();
 
@@ -104,12 +104,11 @@ public class WorkExperienceListview extends ArrayAdapter<WorkExperienceModel>{
                 final TextInputLayout comapnyName = (TextInputLayout)dialogView.findViewById(R.id.companyname);
                 final TextInputLayout fromWork = (TextInputLayout)dialogView.findViewById(R.id.workfrom);
                 final TextInputLayout toWork = (TextInputLayout)dialogView.findViewById(R.id.workto);
-
                 jobRole.getEditText().setText(((WorkExperienceModel) experienceModels.get(position)).getJobrole());
                 jobDescription.getEditText().setText(((WorkExperienceModel) experienceModels.get(position)).getJobdescription());
                 comapnyName.getEditText().setText(((WorkExperienceModel) experienceModels.get(position)).getCompanyname());
                 fromWork.getEditText().setText(((WorkExperienceModel) experienceModels.get(position)).getFromwork());
-
+                toWork.getEditText().setText(((WorkExperienceModel) experienceModels.get(position)).getTowork());
                //check box functionality===========================================================================
                 checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -120,8 +119,6 @@ public class WorkExperienceListview extends ArrayAdapter<WorkExperienceModel>{
                             toWork.getEditText().setText("Present");
 
                         }else{
-                            toWork.getEditText().setText(" ");
-
                             Toast.makeText(getContext(), "unchecked",
                                     Toast.LENGTH_SHORT).show();
                             toWork.getEditText().setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -195,8 +192,8 @@ public class WorkExperienceListview extends ArrayAdapter<WorkExperienceModel>{
                         return false;
                     }
                 });
-                Button save = (Button)dialogView.findViewById(R.id.save_education);
-                Button cancel = (Button)dialogView.findViewById(R.id.cancel_education);
+                Button save = (Button)dialogView.findViewById(R.id.save_work);
+                Button cancel = (Button)dialogView.findViewById(R.id.cancel_work);
                 save.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

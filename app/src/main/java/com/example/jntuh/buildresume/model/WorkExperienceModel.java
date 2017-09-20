@@ -56,7 +56,24 @@ public class WorkExperienceModel extends RealmObject {
         this.towork = towork;
     }
 
-    private String jobrole,jobdescription,companyname,fromwork,towork;
+    public WorkExperienceModel(String jobtitle, String jobrole, String jobdescription, String companyname, String fromwork, String towork) {
+        this.jobtitle = jobtitle;
+        this.jobrole = jobrole;
+        this.jobdescription = jobdescription;
+        this.companyname = companyname;
+        this.fromwork = fromwork;
+        this.towork = towork;
+    }
+
+    public String getJobtitle() {
+        return jobtitle;
+    }
+
+    public void setJobtitle(String jobtitle) {
+        this.jobtitle = jobtitle;
+    }
+
+    private String jobtitle,jobrole,jobdescription,companyname,fromwork,towork;
     public WorkExperienceModel(){
     }
 

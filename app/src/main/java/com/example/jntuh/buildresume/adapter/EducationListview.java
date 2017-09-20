@@ -37,15 +37,15 @@ public class EducationListview extends ArrayAdapter<EducationModel>{
     public int currentposition;
     public ArrayList<EducationModel> educationmodel;
     RadioButton radioButton1,radioButton2;
-    EducationModel educationModel = null;
+    EducationModel educationModel;
     EducationQualification educationQualification;
     AlertDailogManager dailogManager = new AlertDailogManager();
 
-    public EducationListview(Activity activity, ArrayList<EducationModel> peoplelist,EducationQualification educationQualification) {
+    public EducationListview(Activity activity, ArrayList<EducationModel> peoplelist) {
         super(activity,R.layout.addeducationlistrow,peoplelist);
         this.activity = activity;
         this.educationmodel = peoplelist;
-        this.educationQualification = educationQualification;
+
     }
 
     @Override

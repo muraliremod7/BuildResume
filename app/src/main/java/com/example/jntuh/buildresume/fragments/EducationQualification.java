@@ -19,8 +19,11 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.jntuh.buildresume.R;
+import com.example.jntuh.buildresume.ScrollableTabsActivity;
 import com.example.jntuh.buildresume.adapter.EducationListview;
 import com.example.jntuh.buildresume.model.EducationModel;
+import com.example.jntuh.buildresume.model.SaveDataModel;
+import com.example.jntuh.buildresume.realm.RealmController;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
 import java.text.SimpleDateFormat;
@@ -31,10 +34,9 @@ import java.util.Calendar;
 public class EducationQualification extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
     RadioButton radioButton1,radioButton2;
-    public ArrayList<EducationModel> models;
-    public static ArrayList<String> strings;
+    public static ArrayList<EducationModel> models = null;
     public ListView listView;
-    EducationListview edulistview;
+   public EducationListview edulistview;
     public EducationQualification() {
         // Required empty public constructor
     }
@@ -51,11 +53,21 @@ public class EducationQualification extends Fragment implements View.OnClickList
         View itemView = inflater.inflate(R.layout.fragment_education_qualification, container, false);
         actionButton = (FloatingActionButton)itemView.findViewById(R.id.addeducation);
         actionButton.setOnClickListener(this);
-        models = new ArrayList<>();
-        edulistview = new EducationListview(getActivity(),models,this);
         listView = (ListView)itemView.findViewById(R.id.edulistview);
-        strings = new ArrayList<>();
+        models = new ArrayList<>();
+        edulistview = new EducationListview(getActivity(),models);
+        String itemId = ScrollableTabsActivity.id;
+        if(itemId==null){
 
+        }else{
+            RealmController controller = new RealmController(getActivity().getApplication());
+
+            SaveDataModel saveDataModels = controller.getBook(itemId);
+            models = new ArrayList<>(saveDataModels.getEducationModels());
+            edulistview = new EducationListview(getActivity(), models);
+            listView.setAdapter(edulistview);
+            edulistview.notifyDataSetInvalidated();
+        }
         return itemView;
     }
 
@@ -137,8 +149,16 @@ public class EducationQualification extends Fragment implements View.OnClickList
     }
 
     public void saveDetails(String qualification, String institutE, String borunI, String percga, String payear, String percentageType, String graduationType) {
-        EducationModel educationModel = new EducationModel(qualification,institutE,borunI,percentageType,percga,graduationType,payear);
+        EducationModel educationModel = new EducationModel();
+        educationModel.setQualification(qualification);
+        educationModel.setInstitute(institutE);
+        educationModel.setBoardUniversity(borunI);
+        educationModel.setPercentage(percga);
+        educationModel.setPassingYear(payear);
+        educationModel.setGradingType(percentageType);
+        educationModel.setGraduationType(graduationType);
         models.add(educationModel);
+        edulistview = new EducationListview(getActivity(), models);
         listView.setAdapter(edulistview);
         edulistview.notifyDataSetInvalidated();
 

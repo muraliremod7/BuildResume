@@ -12,11 +12,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.example.jntuh.buildresume.R;
+import com.example.jntuh.buildresume.ScrollableTabsActivity;
+import com.example.jntuh.buildresume.model.SaveDataModel;
+import com.example.jntuh.buildresume.realm.RealmController;
 
 
 public class Declaration extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
-    public static TextInputLayout textInputLayout;
+    public static TextInputLayout textInputLayout = null;
     public Declaration() {
         // Required empty public constructor
     }
@@ -34,6 +37,14 @@ public class Declaration extends Fragment implements View.OnClickListener{
         actionButton = (FloatingActionButton)itemView.findViewById(R.id.adddeclaration);
         actionButton.setOnClickListener(this);
         textInputLayout = (TextInputLayout)itemView.findViewById(R.id.declaration);
+        String itemId = ScrollableTabsActivity.id;
+        if(itemId==null){
+
+        }else{
+            RealmController controller = new RealmController(getActivity().getApplication());
+            SaveDataModel saveDataModels = controller.getBook(itemId);
+            textInputLayout.getEditText().setText(saveDataModels.getDeclaration().toString());
+        }
         return itemView;
     }
 

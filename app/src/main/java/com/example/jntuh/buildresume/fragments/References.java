@@ -13,17 +13,20 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.jntuh.buildresume.R;
+import com.example.jntuh.buildresume.ScrollableTabsActivity;
 import com.example.jntuh.buildresume.adapter.ReferencesListview;
 import com.example.jntuh.buildresume.model.ReferencesModel;
+import com.example.jntuh.buildresume.model.SaveDataModel;
+import com.example.jntuh.buildresume.realm.RealmController;
 
 import java.util.ArrayList;
 
 
 public class References extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
-    public ArrayList<ReferencesModel> referencesModels;
+    public static ArrayList<ReferencesModel> referencesModels =null;
     public ListView listView;
-    ReferencesListview detailsListview;
+    ReferencesListview referencesListview;
     public References() {
         // Required empty public constructor
     }
@@ -41,8 +44,19 @@ public class References extends Fragment implements View.OnClickListener{
         actionButton = (FloatingActionButton)itemView.findViewById(R.id.addrefe);
         actionButton.setOnClickListener(this);
         referencesModels = new ArrayList<ReferencesModel>();
-        detailsListview = new ReferencesListview(getActivity(), referencesModels);
+        referencesListview = new ReferencesListview(getActivity(), referencesModels);
         listView = (ListView)itemView.findViewById(R.id.addreflistview);
+        String itemId = ScrollableTabsActivity.id;
+        if(itemId==null){
+
+        }else {
+            RealmController controller = new RealmController(getActivity().getApplication());
+            SaveDataModel saveDataModels = controller.getBook(itemId);
+            referencesModels = new ArrayList<>(saveDataModels.getReferencesModels());
+            referencesListview = new ReferencesListview(getActivity(), referencesModels);
+            listView.setAdapter(referencesListview);
+            referencesListview.notifyDataSetInvalidated();
+        };
         return itemView;
     }
 
@@ -100,7 +114,7 @@ public class References extends Fragment implements View.OnClickListener{
     private void projectdetailssaveDetails(String projectTitle, String projectDesc, String yourRole, String duratIon, String teamMem) {
         ReferencesModel projectDetailModel = new ReferencesModel(projectTitle,projectDesc,yourRole,duratIon,teamMem);
         referencesModels.add(projectDetailModel);
-        listView.setAdapter(detailsListview);
-        detailsListview.notifyDataSetInvalidated();
+        listView.setAdapter(referencesListview);
+        referencesListview.notifyDataSetInvalidated();
     }
 }

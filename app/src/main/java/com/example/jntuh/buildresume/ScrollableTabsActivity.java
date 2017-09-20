@@ -59,26 +59,25 @@ public class ScrollableTabsActivity extends AppCompatActivity {
     References references = new References();
     CareerObjective careerObjective = new CareerObjective();
     Declaration declaration = new Declaration();
+    Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrollable_tabs);
-
+        realm = RealmController.with(this).getRealm();
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
 
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
                    if(id==null){
 
-        }else{
-                       viewPager = (ViewPager) findViewById(R.id.viewpager);
-                       setupViewPager(viewPager);
-
-                       tabLayout = (TabLayout) findViewById(R.id.tabs);
-                       tabLayout.setupWithViewPager(viewPager);
         }
 
 
@@ -147,92 +146,189 @@ public class ScrollableTabsActivity extends AppCompatActivity {
     }
 
     private void saveData() {
+        if(id==null){
+            try{
+                SaveDataModel book = new SaveDataModel();
+                long i= 1 + System.currentTimeMillis();//L is the suffix for long
+                String id =String.valueOf(i);//Now it will return "9993939399"
+                book.setId(id);
+                book.setProfilename(information.profile.getEditText().getText().toString());
+                book.setName(information.name.getEditText().getText().toString());
+                book.setEmail(information.email.getEditText().getText().toString());
+                book.setMobile(information.mobile.getEditText().getText().toString());
+                book.setDateofbirth(information.dateofbirth.getEditText().getText().toString());
+                book.setGender(information.gender.getEditText().getText().toString());
+                book.setMarriagestatus(information.maritialstatus.getEditText().getText().toString());
+                book.setAddress(information.address.getEditText().getText().toString());
+                book.setCity(information.city.getEditText().getText().toString());
+                book.setState(information.state.getEditText().getText().toString());
+                book.setCountry(information.country.getEditText().getText().toString());
+                book.setPincode(information.pincode.getEditText().getText().toString());
+                book.setCountry(information.country.getEditText().getText().toString());
+                if(careerObjective.textInputLayout==null){
 
-        try{
-            SaveDataModel book = new SaveDataModel();
-            long i= 1 + System.currentTimeMillis();//L is the suffix for long
-            String id =String.valueOf(i);//Now it will return "9993939399"
-            book.setId(id);
-            book.setProfilename(information.profile.getEditText().getText().toString());
-            book.setName(information.name.getEditText().getText().toString());
-            book.setEmail(information.email.getEditText().getText().toString());
-            book.setMobile(information.mobile.getEditText().getText().toString());
-            book.setDateofbirth(information.dateofbirth.getEditText().getText().toString());
-            book.setGender(information.gender.getEditText().getText().toString());
-            book.setMarriagestatus(information.maritialstatus.getEditText().getText().toString());
-            book.setAddress(information.address.getEditText().getText().toString());
-            book.setCity(information.city.getEditText().getText().toString());
-            book.setState(information.state.getEditText().getText().toString());
-            book.setCountry(information.country.getEditText().getText().toString());
-            book.setPincode(information.pincode.getEditText().getText().toString());
-            book.setCountry(information.country.getEditText().getText().toString());
-            if(careerObjective.textInputLayout==null){
+                }else{
+                    book.setCareerobjective(careerObjective.textInputLayout.getEditText().getText().toString());
 
-            }else{
-                book.setCareerobjective(careerObjective.textInputLayout.getEditText().getText().toString());
+                }
+                if(qualification.models==null){
 
+                }else{
+                    book.setEducationModels(new RealmList<EducationModel>(qualification.models.toArray(new EducationModel[qualification.models.size()])));
+                }
+                if(experience.experienceModels==null){
+
+                }else{
+                    book.setExperienceModels(new RealmList<WorkExperienceModel>(experience.experienceModels.toArray(new WorkExperienceModel[experience.experienceModels.size()])));
+
+                }
+                if(projects.detailModels==null){
+
+                }else{
+                    book.setProjectDetailModels(new RealmList<ProjectDetailModel>(projects.detailModels.toArray(new ProjectDetailModel[projects.detailModels.size()])));
+
+                }
+                if(other.detailModels==null||other.detailModels1==null||other.detailModels2==null||other.detailModels3==null){
+
+                }else{
+                    book.setOthersModelsskills(new RealmList<OthersModel>(other.detailModels.toArray(new OthersModel[other.detailModels.size()])));
+                    book.setOthersModelsache(new RealmList<OthersModel>(other.detailModels1.toArray(new OthersModel[other.detailModels1.size()])));
+                    book.setOthersModelshobbys(new RealmList<OthersModel>(other.detailModels2.toArray(new OthersModel[other.detailModels2.size()])));
+                    book.setOthersModelslan(new RealmList<OthersModel>(other.detailModels3.toArray(new OthersModel[other.detailModels3.size()])));
+                }
+                if(references.referencesModels==null){
+
+                }else{
+                    book.setReferencesModels(new RealmList<ReferencesModel>(references.referencesModels.toArray(new ReferencesModel[references.referencesModels.size()])));
+                }
+                if(declaration.textInputLayout==null){
+
+                }else {
+                    book.setDeclaration(declaration.textInputLayout.getEditText().getText().toString());
+                }
+
+                Bitmap bitmap = ((BitmapDrawable)information.uploadphoto.getDrawable()).getBitmap();
+                ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 0, bStream);
+                byte[] mByteArray = bStream.toByteArray();
+                book.setPersonpic(mByteArray);
+
+                Bitmap bitmap1 = ((BitmapDrawable)information.uploadsign.getDrawable()).getBitmap();
+                ByteArrayOutputStream bStream1 = new ByteArrayOutputStream();
+                bitmap1.compress(Bitmap.CompressFormat.PNG, 0, bStream);
+                byte[] mByteArray1 = bStream1.toByteArray();
+                book.setSignaturepic(mByteArray1);
+                Realm realm = RealmController.with(this).getRealm();
+                if(ContactInformation.profile.getEditText().getText().equals("")){
+                    AlertDailogManager dailogManager = new AlertDailogManager();
+                    dailogManager.showAlertDialog(this,"Enter Profile Name",false);
+                }else{
+                    realm.beginTransaction();
+                    realm.copyToRealm(book);
+                    realm.commitTransaction();
+                    Toast.makeText(ScrollableTabsActivity.this,"Data Saved",Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(ScrollableTabsActivity.this,ShowDataActivity.class);
+                    startActivity(intent);
+                    this.finish();
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
             }
-            if(qualification.models==null){
+        }else{
+           RealmController controller = new RealmController(this.getApplication());
+            SaveDataModel saveDataModels = controller.getBook(id);
+            realm = RealmController.with(this).getRealm();
+            realm.beginTransaction();
+            saveDataModels.removeFromRealm();
+            realm.commitTransaction();
+            try{
+                SaveDataModel book = new SaveDataModel();
+                long i= 1 + System.currentTimeMillis();//L is the suffix for long
+                String id =String.valueOf(i);//Now it will return "9993939399"
+                book.setId(id);
+                book.setProfilename(information.profile.getEditText().getText().toString());
+                book.setName(information.name.getEditText().getText().toString());
+                book.setEmail(information.email.getEditText().getText().toString());
+                book.setMobile(information.mobile.getEditText().getText().toString());
+                book.setDateofbirth(information.dateofbirth.getEditText().getText().toString());
+                book.setGender(information.gender.getEditText().getText().toString());
+                book.setMarriagestatus(information.maritialstatus.getEditText().getText().toString());
+                book.setAddress(information.address.getEditText().getText().toString());
+                book.setCity(information.city.getEditText().getText().toString());
+                book.setState(information.state.getEditText().getText().toString());
+                book.setCountry(information.country.getEditText().getText().toString());
+                book.setPincode(information.pincode.getEditText().getText().toString());
+                book.setCountry(information.country.getEditText().getText().toString());
+                if(careerObjective.textInputLayout==null){
 
-            }else{
-            book.setEducationModels(new RealmList<EducationModel>(qualification.models.toArray(new EducationModel[qualification.models.size()])));
+                }else{
+                    book.setCareerobjective(careerObjective.textInputLayout.getEditText().getText().toString());
+
+                }
+                if(qualification.models==null){
+
+                }else{
+                    book.setEducationModels(new RealmList<EducationModel>(qualification.models.toArray(new EducationModel[qualification.models.size()])));
+                }
+                if(experience.experienceModels==null){
+
+                }else{
+                    book.setExperienceModels(new RealmList<WorkExperienceModel>(experience.experienceModels.toArray(new WorkExperienceModel[experience.experienceModels.size()])));
+
+                }
+                if(projects.detailModels==null){
+
+                }else{
+                    book.setProjectDetailModels(new RealmList<ProjectDetailModel>(projects.detailModels.toArray(new ProjectDetailModel[projects.detailModels.size()])));
+
+                }
+                if(other.detailModels==null||other.detailModels1==null||other.detailModels2==null||other.detailModels3==null){
+
+                }else{
+                    book.setOthersModelsskills(new RealmList<OthersModel>(other.detailModels.toArray(new OthersModel[other.detailModels.size()])));
+                    book.setOthersModelsache(new RealmList<OthersModel>(other.detailModels1.toArray(new OthersModel[other.detailModels1.size()])));
+                    book.setOthersModelshobbys(new RealmList<OthersModel>(other.detailModels2.toArray(new OthersModel[other.detailModels2.size()])));
+                    book.setOthersModelslan(new RealmList<OthersModel>(other.detailModels3.toArray(new OthersModel[other.detailModels3.size()])));
+                }
+                if(references.referencesModels==null){
+
+                }else{
+                    book.setReferencesModels(new RealmList<ReferencesModel>(references.referencesModels.toArray(new ReferencesModel[references.referencesModels.size()])));
+                }
+                if(declaration.textInputLayout==null){
+
+                }else {
+                    book.setDeclaration(declaration.textInputLayout.getEditText().getText().toString());
+                }
+
+                Bitmap bitmap = ((BitmapDrawable)information.uploadphoto.getDrawable()).getBitmap();
+                ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 0, bStream);
+                byte[] mByteArray = bStream.toByteArray();
+                book.setPersonpic(mByteArray);
+
+                Bitmap bitmap1 = ((BitmapDrawable)information.uploadsign.getDrawable()).getBitmap();
+                ByteArrayOutputStream bStream1 = new ByteArrayOutputStream();
+                bitmap1.compress(Bitmap.CompressFormat.PNG, 0, bStream);
+                byte[] mByteArray1 = bStream1.toByteArray();
+                book.setSignaturepic(mByteArray1);
+                if(ContactInformation.profile.getEditText().getText().equals("")){
+                    AlertDailogManager dailogManager = new AlertDailogManager();
+                    dailogManager.showAlertDialog(this,"Enter Profile Name",false);
+                }else{
+                    realm.beginTransaction();
+                    realm.copyToRealm(book);
+                    realm.commitTransaction();
+                    Toast.makeText(ScrollableTabsActivity.this,"Data Saved",Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(ScrollableTabsActivity.this,ShowDataActivity.class);
+                    startActivity(intent);
+                    this.finish();
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
             }
-            if(experience.experienceModels==null){
 
-            }else{
-                book.setExperienceModels(new RealmList<WorkExperienceModel>(experience.experienceModels.toArray(new WorkExperienceModel[experience.experienceModels.size()])));
-
-            }
-            if(projects.detailModels==null){
-
-            }else{
-                book.setProjectDetailModels(new RealmList<ProjectDetailModel>(projects.detailModels.toArray(new ProjectDetailModel[projects.detailModels.size()])));
-
-            }
-            if(other.detailModels==null||other.detailModels1==null||other.detailModels2==null||other.detailModels3==null){
-
-            }else{
-                book.setOthersModelsskills(new RealmList<OthersModel>(other.detailModels.toArray(new OthersModel[other.detailModels.size()])));
-                book.setOthersModelsache(new RealmList<OthersModel>(other.detailModels1.toArray(new OthersModel[other.detailModels1.size()])));
-                book.setOthersModelshobbys(new RealmList<OthersModel>(other.detailModels2.toArray(new OthersModel[other.detailModels2.size()])));
-                book.setOthersModelslan(new RealmList<OthersModel>(other.detailModels3.toArray(new OthersModel[other.detailModels3.size()])));
-            }
-            if(references.referencesModels==null){
-
-            }else{
-                book.setReferencesModels(new RealmList<ReferencesModel>(references.referencesModels.toArray(new ReferencesModel[references.referencesModels.size()])));
-            }
-            if(declaration.textInputLayout==null){
-
-            }else {
-                book.setDeclaration(declaration.textInputLayout.getEditText().getText().toString());
-            }
-            Bitmap bitmap = ((BitmapDrawable)information.uploadphoto.getDrawable()).getBitmap();
-            ByteArrayOutputStream bStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 90, bStream);
-            byte[] mByteArray = bStream.toByteArray();
-            book.setPersonpic(mByteArray);
-            Bitmap bitmap1 = ((BitmapDrawable)information.uploadsign.getDrawable()).getBitmap();
-            ByteArrayOutputStream bStream1 = new ByteArrayOutputStream();
-            bitmap1.compress(Bitmap.CompressFormat.PNG, 90, bStream);
-            byte[] mByteArray1 = bStream1.toByteArray();
-            book.setPersonpic(mByteArray1);
-            Realm realm = RealmController.with(this).getRealm();
-            if(ContactInformation.profile.getEditText().getText().equals("")){
-                AlertDailogManager dailogManager = new AlertDailogManager();
-                dailogManager.showAlertDialog(this,"Enter Profile Name",false);
-            }else{
-                realm.beginTransaction();
-                realm.copyToRealm(book);
-                realm.commitTransaction();
-                Prefs.with(this).setPreLoad(true);
-                Toast.makeText(ScrollableTabsActivity.this,"Data Saved",Toast.LENGTH_LONG).show();
-            }
-        }catch (NullPointerException e){
-            e.printStackTrace();
         }
-
-
 
     }
 
@@ -263,7 +359,7 @@ public class ScrollableTabsActivity extends AppCompatActivity {
 
                     // do something when the button is clicked
                     public void onClick(DialogInterface dialog, int arg1) {
-finish();                    }
+                    finish();                    }
                 })
                 .show();
 

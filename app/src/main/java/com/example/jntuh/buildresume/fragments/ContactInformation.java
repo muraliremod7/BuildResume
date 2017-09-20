@@ -105,6 +105,7 @@ public class ContactInformation extends Fragment implements View.OnClickListener
             country.getEditText().setText(saveDataModels.getCountry());
             pincode.getEditText().setText(saveDataModels.getPincode());
             gender.getEditText().setText(saveDataModels.getGender());
+
         }
         uploadphoto = (ImageView)itemView.findViewById(R.id.uploadPhoto);
         uploadphoto.setOnClickListener(this);

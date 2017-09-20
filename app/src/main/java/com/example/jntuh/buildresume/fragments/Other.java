@@ -12,8 +12,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.jntuh.buildresume.R;
+import com.example.jntuh.buildresume.ScrollableTabsActivity;
 import com.example.jntuh.buildresume.adapter.OthersListview;
+import com.example.jntuh.buildresume.adapter.ReferencesListview;
 import com.example.jntuh.buildresume.model.OthersModel;
+import com.example.jntuh.buildresume.model.ReferencesModel;
+import com.example.jntuh.buildresume.model.SaveDataModel;
+import com.example.jntuh.buildresume.realm.RealmController;
 
 import java.util.ArrayList;
 
@@ -21,10 +26,10 @@ import java.util.ArrayList;
 public class Other extends Fragment implements View.OnClickListener{
     public Button addskills,addach,addhobbys,addlan;
     public ListView addSkillslv,addAchlv,addHobbyslv,addLanlv;
-    public  ArrayList<OthersModel> detailModels ;
-    public  ArrayList<OthersModel> detailModels1 ;
-    public  ArrayList<OthersModel> detailModels2 ;
-    public  ArrayList<OthersModel> detailModels3 ;
+    public  static ArrayList<OthersModel> detailModels =null;
+    public  static ArrayList<OthersModel> detailModels1=null ;
+    public  static ArrayList<OthersModel> detailModels2=null ;
+    public  static ArrayList<OthersModel> detailModels3 =null;
     OthersListview othersListview;
     OthersListview othersListview1;
     OthersListview othersListview2;
@@ -56,6 +61,7 @@ public class Other extends Fragment implements View.OnClickListener{
         addAchlv = (ListView)itemView.findViewById(R.id.addachivementslistview);
         addHobbyslv = (ListView)itemView.findViewById(R.id.addhobbyslistview);
         addLanlv = (ListView)itemView.findViewById(R.id.addlanlistview);
+
         detailModels = new ArrayList<OthersModel>();
         detailModels1 = new ArrayList<OthersModel>();
         detailModels2 = new ArrayList<OthersModel>();
@@ -65,7 +71,35 @@ public class Other extends Fragment implements View.OnClickListener{
         othersListview1 = new OthersListview(getActivity(),detailModels1);
         othersListview2 = new OthersListview(getActivity(),detailModels2);
         othersListview3 = new OthersListview(getActivity(),detailModels3);
+        String itemId = ScrollableTabsActivity.id;
+        if(itemId==null){
 
+        }else {
+            RealmController controller = new RealmController(getActivity().getApplication());
+            SaveDataModel saveDataModels = controller.getBook(itemId);
+            detailModels = new ArrayList<>(saveDataModels.getOthersModelsskills());
+            detailModels1 = new ArrayList<>(saveDataModels.getOthersModelsache());
+            detailModels2 = new ArrayList<>(saveDataModels.getOthersModelshobbys());
+            detailModels3 = new ArrayList<>(saveDataModels.getOthersModelslan());
+
+            othersListview = new OthersListview(getActivity(), detailModels);
+            addLanlv.setAdapter(othersListview);
+            othersListview3.notifyDataSetInvalidated();
+
+
+            othersListview1 = new OthersListview(getActivity(), detailModels1);
+            addHobbyslv.setAdapter(othersListview1);
+            othersListview2.notifyDataSetInvalidated();
+
+
+            othersListview2 = new OthersListview(getActivity(), detailModels2);
+            addAchlv.setAdapter(othersListview2);
+            othersListview1.notifyDataSetInvalidated();
+
+            othersListview3 = new OthersListview(getActivity(), detailModels3);
+            addSkillslv.setAdapter(othersListview3);
+            othersListview.notifyDataSetInvalidated();
+        };
         return itemView;
     }
 
