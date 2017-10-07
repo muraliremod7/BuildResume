@@ -14,26 +14,27 @@ import android.widget.Toast;
 import com.example.jntuh.buildresume.R;
 import com.example.jntuh.buildresume.ScrollableTabsActivity;
 import com.example.jntuh.buildresume.adapter.OthersListview;
-import com.example.jntuh.buildresume.adapter.ReferencesListview;
 import com.example.jntuh.buildresume.model.OthersModel;
-import com.example.jntuh.buildresume.model.ReferencesModel;
 import com.example.jntuh.buildresume.model.SaveDataModel;
 import com.example.jntuh.buildresume.realm.RealmController;
 
 import java.util.ArrayList;
 
+import io.realm.Realm;
+
 
 public class Other extends Fragment implements View.OnClickListener{
     public Button addskills,addach,addhobbys,addlan;
     public ListView addSkillslv,addAchlv,addHobbyslv,addLanlv;
-    public  static ArrayList<OthersModel> detailModels =null;
-    public  static ArrayList<OthersModel> detailModels1=null ;
-    public  static ArrayList<OthersModel> detailModels2=null ;
-    public  static ArrayList<OthersModel> detailModels3 =null;
-    OthersListview othersListview;
-    OthersListview othersListview1;
-    OthersListview othersListview2;
-    OthersListview othersListview3;
+    public  static ArrayList<OthersModel> detailModels ;
+    public  static ArrayList<OthersModel> detailModels1 ;
+    public  static ArrayList<OthersModel> detailModels2 ;
+    public  static ArrayList<OthersModel> detailModels3 ;
+    public OthersListview othersListview;
+    public OthersListview othersListview1;
+    public OthersListview othersListview2;
+    public OthersListview othersListview3;
+    private Realm realm;
     public Other() {
         // Required empty public constructor
     }
@@ -48,6 +49,14 @@ public class Other extends Fragment implements View.OnClickListener{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View itemView = inflater.inflate(R.layout.fragment_other, container, false);
+
+        addSkillslv = (ListView)itemView.findViewById(R.id.addskillslistview);
+        addAchlv = (ListView)itemView.findViewById(R.id.addachivementslistview);
+        addHobbyslv = (ListView)itemView.findViewById(R.id.addhobbyslistview);
+        addLanlv = (ListView)itemView.findViewById(R.id.addlanlistview);
+
+        String itemId = ScrollableTabsActivity.itemid;
+
         addskills = (Button)itemView.findViewById(R.id.addskills);
         addskills.setOnClickListener(this);
         addach = (Button)itemView.findViewById(R.id.addachivements);
@@ -56,12 +65,7 @@ public class Other extends Fragment implements View.OnClickListener{
         addhobbys.setOnClickListener(this);
         addlan = (Button)itemView.findViewById(R.id.addlan);
         addlan.setOnClickListener(this);
-
-        addSkillslv = (ListView)itemView.findViewById(R.id.addskillslistview);
-        addAchlv = (ListView)itemView.findViewById(R.id.addachivementslistview);
-        addHobbyslv = (ListView)itemView.findViewById(R.id.addhobbyslistview);
-        addLanlv = (ListView)itemView.findViewById(R.id.addlanlistview);
-
+        this.realm = RealmController.with(this).getRealm();
         detailModels = new ArrayList<OthersModel>();
         detailModels1 = new ArrayList<OthersModel>();
         detailModels2 = new ArrayList<OthersModel>();
@@ -71,12 +75,16 @@ public class Other extends Fragment implements View.OnClickListener{
         othersListview1 = new OthersListview(getActivity(),detailModels1);
         othersListview2 = new OthersListview(getActivity(),detailModels2);
         othersListview3 = new OthersListview(getActivity(),detailModels3);
-        String itemId = ScrollableTabsActivity.id;
+
+        addSkillslv.setAdapter(othersListview3);
+        addAchlv.setAdapter(othersListview2);
+        addHobbyslv.setAdapter(othersListview1);
+        addLanlv.setAdapter(othersListview);
         if(itemId==null){
 
         }else {
             RealmController controller = new RealmController(getActivity().getApplication());
-            SaveDataModel saveDataModels = controller.getBook(itemId);
+            SaveDataModel saveDataModels = realm.where(SaveDataModel.class).equalTo("id", Integer.parseInt(itemId)).findFirst();
             detailModels = new ArrayList<>(saveDataModels.getOthersModelsskills());
             detailModels1 = new ArrayList<>(saveDataModels.getOthersModelsache());
             detailModels2 = new ArrayList<>(saveDataModels.getOthersModelshobbys());
@@ -178,25 +186,29 @@ public class Other extends Fragment implements View.OnClickListener{
     }
 
     private void otherssaveskills(String qualification) {
-        OthersModel othersModel = new OthersModel(qualification);
+        OthersModel othersModel = new OthersModel();
+        othersModel.setValue(qualification);
         detailModels.add(othersModel);
         addLanlv.setAdapter(othersListview);
         othersListview.notifyDataSetInvalidated();
     }
     private void otherssaveache(String qualification) {
-        OthersModel othersModel = new OthersModel(qualification);
+        OthersModel othersModel = new OthersModel();
+        othersModel.setValue(qualification);
         detailModels1.add(othersModel);
         addHobbyslv.setAdapter(othersListview1);
         othersListview1.notifyDataSetInvalidated();
     }
     private void otherssavehobbys(String qualification) {
-        OthersModel othersModel = new OthersModel(qualification);
+        OthersModel othersModel = new OthersModel();
+        othersModel.setValue(qualification);
         detailModels2.add(othersModel);
         addAchlv.setAdapter(othersListview2);
         othersListview2.notifyDataSetInvalidated();
     }
     private void otherssavelan(String qualification) {
-        OthersModel othersModel = new OthersModel(qualification);
+        OthersModel othersModel = new OthersModel();
+        othersModel.setValue(qualification);
         detailModels3.add(othersModel);
         addSkillslv.setAdapter(othersListview3);
         othersListview3.notifyDataSetInvalidated();

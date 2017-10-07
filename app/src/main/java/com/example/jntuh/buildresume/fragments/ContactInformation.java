@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.net.Uri;
@@ -33,8 +34,8 @@ import com.example.jntuh.buildresume.Utility;
 import com.example.jntuh.buildresume.model.SaveDataModel;
 import com.example.jntuh.buildresume.realm.RealmController;
 import com.github.gcacace.signaturepad.views.SignaturePad;
-import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,19 +43,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import io.realm.Realm;
 
 
 public class ContactInformation extends Fragment implements View.OnClickListener{
     public static TextInputLayout profile,name,email,mobile,address,dateofbirth,maritialstatus,city,state,country,pincode,gender;
     public static ImageView uploadphoto,uploadsign;
-    private int REQUEST_CAMERA = 0, SELECT_FILE = 1;
+    private int REQUEST_CAMERA = 0, SELECT_FILE = 1, SELECT_FILE1=2;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
     private Button mClearButton;
     private Button mSaveButton;
-
+    private Realm realm;
     private SignaturePad mSignaturePad;
 
     private String userChoosenTask;
@@ -85,32 +87,45 @@ public class ContactInformation extends Fragment implements View.OnClickListener
         country = (TextInputLayout)itemView.findViewById(R.id.country);
         pincode = (TextInputLayout)itemView.findViewById(R.id.pincode);
         gender = (TextInputLayout)itemView.findViewById(R.id.gender);
-
-        String itemId = ScrollableTabsActivity.id;
+        uploadphoto = (ImageView)itemView.findViewById(R.id.uploadPhoto);
+        uploadphoto.setOnClickListener(this);
+        uploadsign = (ImageView)itemView.findViewById(R.id.uploadSign);
+        uploadsign.setOnClickListener(this);
+        this.realm = RealmController.with(this).getRealm();
+        String itemId = ScrollableTabsActivity.itemid;
 
         if(itemId == null){
 
         }else{
             RealmController controller = new RealmController(getActivity().getApplication());
-            SaveDataModel saveDataModels = controller.getBook(itemId);
-            profile.getEditText().setText(saveDataModels.getProfilename());
-            name.getEditText().setText(saveDataModels.getName());
-            email.getEditText().setText(saveDataModels.getEmail());
-            mobile.getEditText().setText(saveDataModels.getMobile());
-            address.getEditText().setText(saveDataModels.getAddress());
-            dateofbirth.getEditText().setText(saveDataModels.getDateofbirth());
-            maritialstatus.getEditText().setText(saveDataModels.getMarriagestatus());
-            city.getEditText().setText(saveDataModels.getCity());
-            state.getEditText().setText(saveDataModels.getState());
-            country.getEditText().setText(saveDataModels.getCountry());
-            pincode.getEditText().setText(saveDataModels.getPincode());
-            gender.getEditText().setText(saveDataModels.getGender());
+            SaveDataModel saveDataModels = realm.where(SaveDataModel.class).equalTo("id", Integer.parseInt(itemId)).findFirst();
+            try{
+                profile.getEditText().setText(saveDataModels.getProfilename());
+                name.getEditText().setText(saveDataModels.getName());
+                email.getEditText().setText(saveDataModels.getEmail());
+                mobile.getEditText().setText(saveDataModels.getMobile());
+                address.getEditText().setText(saveDataModels.getAddress());
+                dateofbirth.getEditText().setText(saveDataModels.getDateofbirth());
+                maritialstatus.getEditText().setText(saveDataModels.getMarriagestatus());
+                city.getEditText().setText(saveDataModels.getCity());
+                state.getEditText().setText(saveDataModels.getState());
+                country.getEditText().setText(saveDataModels.getCountry());
+                pincode.getEditText().setText(saveDataModels.getPincode());
+                gender.getEditText().setText(saveDataModels.getGender());
+
+                ByteArrayInputStream arrayInputStream = new ByteArrayInputStream(saveDataModels.getPersonpic());
+                Bitmap bitmap = BitmapFactory.decodeStream(arrayInputStream);
+                uploadphoto.setImageBitmap(bitmap);
+
+                ByteArrayInputStream arrayInputStreamm = new ByteArrayInputStream(saveDataModels.getSignaturepic());
+                Bitmap bitmapp = BitmapFactory.decodeStream(arrayInputStreamm);
+                uploadsign.setImageBitmap(bitmapp);
+            }catch (NullPointerException e){
+
+            }
+
 
         }
-        uploadphoto = (ImageView)itemView.findViewById(R.id.uploadPhoto);
-        uploadphoto.setOnClickListener(this);
-        uploadsign = (ImageView)itemView.findViewById(R.id.uploadSign);
-        uploadsign.setOnClickListener(this);
         dateofbirth.getEditText().setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -271,6 +286,57 @@ public class ContactInformation extends Fragment implements View.OnClickListener
         });
         builder.show();
     }
+    private void cameraIntent()
+    {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, REQUEST_CAMERA);
+    }
+    private void galleryIntent()
+    {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);//
+        startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == SELECT_FILE){
+                onSelectFromGalleryResult(data);
+            }else if(requestCode==SELECT_FILE1){
+                onSelectFromGalleryResult1(data);
+            }
+
+            else if (requestCode == REQUEST_CAMERA)
+                onCaptureImageResult(data);
+        }
+    }
+
+    private void onCaptureImageResult(Intent data) {
+        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+
+        File destination = new File(Environment.getExternalStorageDirectory(),
+                System.currentTimeMillis() + ".jpg");
+
+        FileOutputStream fo;
+        try {
+            destination.createNewFile();
+            fo = new FileOutputStream(destination);
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        uploadphoto.setImageBitmap(thumbnail);
+    }
+
     private void selectSignature() {
         final CharSequence[] items = { "Take Signature", "Choose from Library",
                 "Cancel" };
@@ -341,7 +407,7 @@ public class ContactInformation extends Fragment implements View.OnClickListener
                         builder.setView(dialogView);
                         builder.setTitle("Draw Signature!");
 
-                        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.dismiss();
                             }
@@ -352,7 +418,7 @@ public class ContactInformation extends Fragment implements View.OnClickListener
                 } else if (items[item].equals("Choose from Library")) {
                     userChoosenTask ="Choose from Library";
                     if(result)
-                        galleryIntent();
+                        galleryIntent1();
 
                 } else if (items[item].equals("Cancel")) {
                     dialog.dismiss();
@@ -362,18 +428,14 @@ public class ContactInformation extends Fragment implements View.OnClickListener
         builder.show();
     }
 
-    private void galleryIntent()
+
+
+    private void galleryIntent1()
     {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);//
-        startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE);
-    }
-
-    private void cameraIntent()
-    {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, REQUEST_CAMERA);
+        startActivityForResult(Intent.createChooser(intent, "Select File"),SELECT_FILE1);
     }
     public File getAlbumStorageDir(String albumName) {
         // Get the directory for the user's public pictures directory.
@@ -455,40 +517,6 @@ public class ContactInformation extends Fragment implements View.OnClickListener
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == SELECT_FILE)
-                onSelectFromGalleryResult(data);
-            else if (requestCode == REQUEST_CAMERA)
-                onCaptureImageResult(data);
-        }
-    }
-
-    private void onCaptureImageResult(Intent data) {
-        Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        thumbnail.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
-
-        File destination = new File(Environment.getExternalStorageDirectory(),
-                System.currentTimeMillis() + ".jpg");
-
-        FileOutputStream fo;
-        try {
-            destination.createNewFile();
-            fo = new FileOutputStream(destination);
-            fo.write(bytes.toByteArray());
-            fo.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        uploadphoto.setImageBitmap(thumbnail);
-    }
 
     @SuppressWarnings("deprecation")
     private void onSelectFromGalleryResult(Intent data) {
@@ -504,6 +532,19 @@ public class ContactInformation extends Fragment implements View.OnClickListener
 
         uploadphoto.setImageBitmap(bm);
     }
+    @SuppressWarnings("deprecation")
+    private void onSelectFromGalleryResult1(Intent data) {
 
+        Bitmap bm=null;
+        if (data != null) {
+            try {
+                bm = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getData());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        uploadsign.setImageBitmap(bm);
+    }
 
 }

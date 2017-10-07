@@ -16,10 +16,13 @@ import com.example.jntuh.buildresume.ScrollableTabsActivity;
 import com.example.jntuh.buildresume.model.SaveDataModel;
 import com.example.jntuh.buildresume.realm.RealmController;
 
+import io.realm.Realm;
+
 
 public class CareerObjective extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
-    public static TextInputLayout textInputLayout =null;
+    public static TextInputLayout textInputLayout;
+    private Realm realm;
     public CareerObjective() {
         // Required empty public constructor
     }
@@ -37,13 +40,18 @@ public class CareerObjective extends Fragment implements View.OnClickListener{
         actionButton = (FloatingActionButton)itemView.findViewById(R.id.adddcareerobjective);
         actionButton.setOnClickListener(this);
         textInputLayout = (TextInputLayout)itemView.findViewById(R.id.careerobjective);
-        String itemId = ScrollableTabsActivity.id;
+        this.realm = RealmController.with(this).getRealm();
+        String itemId = ScrollableTabsActivity.itemid;
         if(itemId==null){
 
         }else{
-            RealmController controller = new RealmController(getActivity().getApplication());
-            SaveDataModel saveDataModels = controller.getBook(itemId);
-            textInputLayout.getEditText().setText(saveDataModels.getCareerobjective().toString());
+            SaveDataModel saveDataModels = realm.where(SaveDataModel.class).equalTo("id", Integer.parseInt(itemId)).findFirst();
+            try{
+                textInputLayout.getEditText().setText(saveDataModels.getCareerobjective().toString());
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+
         }
         return itemView;
     }

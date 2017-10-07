@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(cdrs);
                 break;
             case R.id.savedResumes:
+                Intent saved = new Intent(MainActivity.this,SavedResumesActivity.class);
+                startActivity(saved);
                 break;
         }
 

@@ -1,7 +1,7 @@
 package com.example.jntuh.buildresume.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -10,9 +10,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -30,17 +29,35 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmResults;
+
 
 public class EducationQualification extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
     RadioButton radioButton1,radioButton2;
-    public static ArrayList<EducationModel> models = null;
+    public static ArrayList<EducationModel> models;
     public ListView listView;
-   public EducationListview edulistview;
+    public static EducationListview edulistview;
+    public String itemId;
+    private Realm realm;
+    private static EducationQualification instance;
     public EducationQualification() {
         // Required empty public constructor
     }
+    public static EducationQualification newInstance(String text){
+        EducationQualification qualification = new EducationQualification();
+        Bundle b = new Bundle();
+        b.putString("msg", text);
 
+        qualification.setArguments(b);
+        return qualification;
+    }
+    @Override
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,15 +71,15 @@ public class EducationQualification extends Fragment implements View.OnClickList
         actionButton = (FloatingActionButton)itemView.findViewById(R.id.addeducation);
         actionButton.setOnClickListener(this);
         listView = (ListView)itemView.findViewById(R.id.edulistview);
-        models = new ArrayList<>();
+        this.realm = RealmController.with(this).getRealm();
+        models = new ArrayList<EducationModel>();
         edulistview = new EducationListview(getActivity(),models);
-        String itemId = ScrollableTabsActivity.id;
+        itemId = ScrollableTabsActivity.itemid;
         if(itemId==null){
 
         }else{
-            RealmController controller = new RealmController(getActivity().getApplication());
 
-            SaveDataModel saveDataModels = controller.getBook(itemId);
+            SaveDataModel saveDataModels = realm.where(SaveDataModel.class).equalTo("id", Integer.parseInt(itemId)).findFirst();
             models = new ArrayList<>(saveDataModels.getEducationModels());
             edulistview = new EducationListview(getActivity(), models);
             listView.setAdapter(edulistview);
@@ -70,7 +87,9 @@ public class EducationQualification extends Fragment implements View.OnClickList
         }
         return itemView;
     }
-
+    public static EducationQualification getInstance() {
+        return instance;
+    }
     @Override
     public void onClick(final View view) {
         switch (view.getId()){
@@ -108,6 +127,8 @@ public class EducationQualification extends Fragment implements View.OnClickList
                         return false;
                     }
                 });
+                //2131624080
+                //4086
                 Button save = (Button)dialogView.findViewById(R.id.save_education);
                 Button cancel = (Button)dialogView.findViewById(R.id.cancel_education);
                 save.setOnClickListener(new View.OnClickListener() {
@@ -115,7 +136,7 @@ public class EducationQualification extends Fragment implements View.OnClickList
                     public void onClick(View view) {
                         int selectedId = dialogRadioGroup .getCheckedRadioButtonId();
                         int selectedId1 = dialogRadioGroup1 .getCheckedRadioButtonId();
-                        // find the radio button by returned id
+                        // find the radio button by returned itemid
                          radioButton1 = (RadioButton) dialogView.findViewById(selectedId);
                          radioButton2 = (RadioButton) dialogView.findViewById(selectedId1);
                         try{

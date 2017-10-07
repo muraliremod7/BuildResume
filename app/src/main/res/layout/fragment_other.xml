@@ -1,59 +1,65 @@
-<android.support.v4.widget.NestedScrollView
-    android:layout_height="2000dp"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:fillViewport="true"
-    xmlns:android="http://schemas.android.com/apk/res/android">
- <LinearLayout
-     android:id="@+id/addEducation"
-     android:layout_marginTop="10dp"
-     android:layout_width="match_parent"
-     android:layout_height="wrap_content"
-     android:orientation="vertical"
-     android:layout_marginLeft="10dp"
-     android:layout_marginRight="10dp">
-  <Button
-      android:id="@+id/addskills"
+    android:layout_height="match_parent">
+ <android.support.v4.widget.NestedScrollView
+     android:layout_width="fill_parent"
+     android:fillViewport="true"
+     android:layout_height="fill_parent">
+  <LinearLayout
+      android:id="@+id/addEducation"
+      android:layout_marginTop="10dp"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:textColor="@color/colorAccent"
-      android:text="Add Skills"/>
-  <ListView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/addskillslistview"
-      android:layout_marginTop="10dp"/>
-  <Button
-      android:id="@+id/addachivements"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:textColor="@color/colorAccent"
-      android:text="Add Achievments"/>
-  <ListView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/addachivementslistview"
-      android:layout_marginTop="10dp"/>
-  <Button
-      android:id="@+id/addhobbys"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:textColor="@color/colorAccent"
-      android:text="Add Hobby's"/>
-  <ListView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/addhobbyslistview"
-      android:layout_marginTop="10dp"/>
-  <Button
-      android:id="@+id/addlan"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:textColor="@color/colorAccent"
-      android:text="Add Languages"/>
-  <ListView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:id="@+id/addlanlistview"
-      android:layout_marginTop="10dp"/>
- </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+      android:layout_height="2000dp"
+      android:orientation="vertical"
+      android:layout_marginLeft="10dp"
+      android:layout_marginRight="10dp">
+   <Button
+       android:id="@+id/addskills"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:textColor="@color/colorAccent"
+       android:text="Add Skills"/>
+   <ListView
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:id="@+id/addskillslistview"
+       android:layout_marginTop="10dp"/>
+   <Button
+       android:id="@+id/addachivements"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:textColor="@color/colorAccent"
+       android:text="Add Achievments"/>
+   <ListView
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:id="@+id/addachivementslistview"
+       android:layout_marginTop="10dp"/>
+   <Button
+       android:id="@+id/addhobbys"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:textColor="@color/colorAccent"
+       android:text="Add Hobby's"/>
+   <ListView
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:id="@+id/addhobbyslistview"
+       android:layout_marginTop="10dp"/>
+   <Button
+       android:id="@+id/addlan"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:textColor="@color/colorAccent"
+       android:text="Add Languages"/>
+   <ListView
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:id="@+id/addlanlistview"
+       android:layout_marginTop="10dp"/>
+  </LinearLayout>
+ </android.support.v4.widget.NestedScrollView>
+
+</RelativeLayout>
+

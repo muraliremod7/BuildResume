@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.example.jntuh.buildresume.R;
@@ -21,7 +20,6 @@ import com.example.jntuh.buildresume.ScrollableTabsActivity;
 import com.example.jntuh.buildresume.adapter.ProjectDetailsListview;
 import com.example.jntuh.buildresume.model.ProjectDetailModel;
 import com.example.jntuh.buildresume.model.SaveDataModel;
-import com.example.jntuh.buildresume.model.WorkExperienceModel;
 import com.example.jntuh.buildresume.realm.RealmController;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
@@ -29,12 +27,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import io.realm.Realm;
+
 
 public class Projects extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
     public static ArrayList<ProjectDetailModel> detailModels=null;
     public ListView listView;
     ProjectDetailsListview detailsListview;
+    private Realm realm;
     String toworkk = null;
     public Projects() {
         // Required empty public constructor
@@ -55,13 +56,12 @@ public class Projects extends Fragment implements View.OnClickListener{
         detailModels = new ArrayList<ProjectDetailModel>();
         detailsListview = new ProjectDetailsListview(getActivity(),detailModels);
         listView = (ListView)itemView.findViewById(R.id.projectlistview);
-        String itemId = ScrollableTabsActivity.id;
+        String itemId = ScrollableTabsActivity.itemid;
+        this.realm = RealmController.with(this).getRealm();
         if(itemId==null){
 
         }else {
-            RealmController controller = new RealmController(getActivity().getApplication());
-            SaveDataModel saveDataModels = null;
-            saveDataModels = controller.getBook(itemId);
+            SaveDataModel saveDataModels = realm.where(SaveDataModel.class).equalTo("id", Integer.parseInt(itemId)).findFirst();
             detailModels = new ArrayList<>(saveDataModels.getProjectDetailModels());
             detailsListview = new ProjectDetailsListview(getActivity(), detailModels);
             listView.setAdapter(detailsListview);

@@ -28,7 +28,7 @@ public class OthersListview extends ArrayAdapter<OthersModel>{
     public final Activity activity;
     public int currentposition;
     public ArrayList<OthersModel> othersModels;
-    OthersModel referencesModel = null;
+    OthersModel referencesModel;
 
 
     public OthersListview(Activity activity, ArrayList<OthersModel> peoplelist ) {
@@ -59,7 +59,6 @@ public class OthersListview extends ArrayAdapter<OthersModel>{
             currentposition = position;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertview= inflater.inflate(R.layout.addvaluelistrow, null, true);
-        ImageView edit = (ImageView)convertview.findViewById(R.id.editvalue);
         ImageView delete = (ImageView)convertview.findViewById(R.id.deletevalue);
         valueothers = (TextView) convertview.findViewById(R.id.value);
 
@@ -68,52 +67,54 @@ public class OthersListview extends ArrayAdapter<OthersModel>{
         valueothers.setText(referencesModel.getValue());
 
 
-        edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                LayoutInflater inflater = activity.getLayoutInflater();
-                final View dialogView = inflater.inflate(R.layout.addvalue, null);
-                builder.setTitle("Update Reference Details");
-                builder.setView(dialogView);
-                final AlertDialog alertDialog = builder.create();
-
-                final TextInputLayout valueOthers = (TextInputLayout)dialogView.findViewById(R.id.valueother);
-
-
-                valueOthers.getEditText().setText(((OthersModel) othersModels.get(position)).getValue());
-
-
-                Button save = (Button)dialogView.findViewById(R.id.save_value);
-                Button cancel = (Button)dialogView.findViewById(R.id.cancel_value);
-                save.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        try{
-
-                            String qualification = valueOthers.getEditText().getText().toString();
-
-                            if(qualification==null||qualification==""){
-                                Toast.makeText(getContext(),"Should Be Fill All Fields",Toast.LENGTH_LONG).show();
-                            }else{
-//                                educationQualification.saveDetails(jobrole,institutE,borunI,percga,payear,percentageType,graduationType);
-                                alertDialog.dismiss();
-                            }
-                        }catch (NullPointerException e){
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        alertDialog.dismiss();
-                    }
-                });
-                alertDialog.show();
-            }
-        });
+//        edit.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//                LayoutInflater inflater = activity.getLayoutInflater();
+//                final View dialogView = inflater.inflate(R.layout.addvalue, null);
+//                builder.setTitle("Update Reference Details");
+//                builder.setView(dialogView);
+//                final AlertDialog alertDialog = builder.create();
+//
+//                final TextInputLayout valueOthers = (TextInputLayout)dialogView.findViewById(R.id.valueother);
+//
+//
+//                valueOthers.getEditText().setText(((OthersModel) othersModels.get(position)).getValue());
+//
+//
+//                Button save = (Button)dialogView.findViewById(R.id.save_value);
+//                Button cancel = (Button)dialogView.findViewById(R.id.cancel_value);
+//                save.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//
+//                        try{
+//
+//                            String qualification = valueOthers.getEditText().getText().toString();
+//
+//                            if(qualification==null||qualification==""){
+//                                Toast.makeText(getContext(),"Should Be Fill All Fields",Toast.LENGTH_LONG).show();
+//                            }else{
+//                                OthersModel othersModel = new OthersModel();
+//                                othersModel.setValue(qualification);
+//
+//                                alertDialog.dismiss();
+//                            }
+//                        }catch (NullPointerException e){
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                });
+//                cancel.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        alertDialog.dismiss();
+//                    }
+//                });
+//                alertDialog.show();
+//            }
+//        });
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

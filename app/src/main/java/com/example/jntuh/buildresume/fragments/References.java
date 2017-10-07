@@ -21,12 +21,15 @@ import com.example.jntuh.buildresume.realm.RealmController;
 
 import java.util.ArrayList;
 
+import io.realm.Realm;
+
 
 public class References extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
     public static ArrayList<ReferencesModel> referencesModels =null;
     public ListView listView;
     ReferencesListview referencesListview;
+    private Realm realm;
     public References() {
         // Required empty public constructor
     }
@@ -46,12 +49,12 @@ public class References extends Fragment implements View.OnClickListener{
         referencesModels = new ArrayList<ReferencesModel>();
         referencesListview = new ReferencesListview(getActivity(), referencesModels);
         listView = (ListView)itemView.findViewById(R.id.addreflistview);
-        String itemId = ScrollableTabsActivity.id;
+        this.realm = RealmController.with(this).getRealm();
+        String itemId = ScrollableTabsActivity.itemid;
         if(itemId==null){
 
         }else {
-            RealmController controller = new RealmController(getActivity().getApplication());
-            SaveDataModel saveDataModels = controller.getBook(itemId);
+            SaveDataModel saveDataModels = realm.where(SaveDataModel.class).equalTo("id", Integer.parseInt(itemId)).findFirst();
             referencesModels = new ArrayList<>(saveDataModels.getReferencesModels());
             referencesListview = new ReferencesListview(getActivity(), referencesModels);
             listView.setAdapter(referencesListview);

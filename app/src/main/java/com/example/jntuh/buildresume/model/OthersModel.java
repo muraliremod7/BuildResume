@@ -5,7 +5,6 @@ import io.realm.RealmObject;
 /**
  * Created by JNTUH on 13-09-2017.
  */
-
 public class OthersModel extends RealmObject {
     public OthersModel(){
     }

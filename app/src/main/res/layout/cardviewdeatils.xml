@@ -5,18 +5,19 @@
     style="@style/AppTheme.Card.Margins"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
         <ImageView
             android:id="@+id/profile_image"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_gravity="center_vertical|start" />
-
         <LinearLayout
             android:layout_weight="1"
             android:id="@+id/layout_partner"
@@ -110,4 +111,31 @@
             android:clickable="true"
             android:focusable="false"/>
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/createPdf"
+        android:background="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_gravity="bottom"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <TextView
+            android:textStyle="bold"
+            android:textColor="@color/textColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Resume"
+            android:focusable="false"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:focusable="false"
+            android:id="@+id/imageView"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:src="@drawable/rightarraow" />
+    </LinearLayout>
+</LinearLayout>
+
 </android.support.v7.widget.CardView>

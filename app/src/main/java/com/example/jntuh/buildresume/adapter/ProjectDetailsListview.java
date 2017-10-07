@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.jntuh.buildresume.R;
 import com.example.jntuh.buildresume.fragments.EducationQualification;
+import com.example.jntuh.buildresume.fragments.Projects;
 import com.example.jntuh.buildresume.model.ProjectDetailModel;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
@@ -36,8 +37,8 @@ public class ProjectDetailsListview extends ArrayAdapter<ProjectDetailModel>{
     public final Activity activity;
     public int currentposition;
     public ArrayList<ProjectDetailModel> detailModels;
-    String toworkk = null;
-    ProjectDetailModel projectDetailModel = null;
+    String toworkk;
+    ProjectDetailModel projectDetailModel;
 
     public ProjectDetailsListview(Activity activity, ArrayList<ProjectDetailModel> peoplelist) {
         super(activity,R.layout.addprojectslistrow,peoplelist);
@@ -103,6 +104,14 @@ public class ProjectDetailsListview extends ArrayAdapter<ProjectDetailModel>{
                 final TextInputLayout durationto = (TextInputLayout)dialogView.findViewById(R.id.durationto);
                 final TextInputLayout teammem = (TextInputLayout)dialogView.findViewById(R.id.teammembers);
                 final CheckBox checkBox = (CheckBox)dialogView.findViewById(R.id.checkBoxpd);
+
+                projecttitle.getEditText().setText(((ProjectDetailModel) detailModels.get(position)).getProjecttitle());
+                projectdesc.getEditText().setText(((ProjectDetailModel) detailModels.get(position)).getProjectdesc());
+                yourrole.getEditText().setText(((ProjectDetailModel) detailModels.get(position)).getYourrole());
+                durationfrom.getEditText().setText(((ProjectDetailModel) detailModels.get(position)).getDurationfrom());
+                durationto.getEditText().setText(((ProjectDetailModel) detailModels.get(position)).getDurationto());
+                teammem.getEditText().setText(((ProjectDetailModel) detailModels.get(position)).getTeammem());
+
                 checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -203,7 +212,15 @@ public class ProjectDetailsListview extends ArrayAdapter<ProjectDetailModel>{
                             if(projectTitle==null||projectTitle==""||projectDesc==""||projectDesc==null||teamMem==null||teamMem==""||yourRole==null||yourRole==""||percga==null||percga==""){
                                 Toast.makeText(getContext(),"Should Be Fill All Fields",Toast.LENGTH_LONG).show();
                             }else{
-                                //projectdetailssaveDetails(projectTitle,projectDesc,yourRole,percga,durationTo,teamMem);
+                                ProjectDetailModel projectDetailModel = new ProjectDetailModel();
+                                projectDetailModel.setProjecttitle(projectTitle);
+                                projectDetailModel.setProjectdesc(projectDesc);
+                                projectDetailModel.setYourrole(yourRole);
+                                projectDetailModel.setDurationfrom(percga);
+                                projectDetailModel.setDurationto(durationTo);
+                                projectDetailModel.setTeammem(teamMem);
+                                Projects.detailModels.set(position,projectDetailModel);
+                                notifyDataSetChanged();
                                 alertDialog.dismiss();
                             }
                         }catch (NullPointerException e){

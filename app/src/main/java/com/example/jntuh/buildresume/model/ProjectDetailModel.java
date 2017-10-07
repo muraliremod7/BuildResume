@@ -5,7 +5,6 @@ import io.realm.RealmObject;
 /**
  * Created by JNTUH on 10-09-2017.
  */
-
 public class ProjectDetailModel extends RealmObject {
 
     public ProjectDetailModel(String projecttitle, String projectdesc, String yourrole, String durationfrom,String durationto, String teammem) {

@@ -20,15 +20,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jntuh.buildresume.R;
+import com.example.jntuh.buildresume.ScrollableTabsActivity;
 import com.example.jntuh.buildresume.fragments.EducationQualification;
 import com.example.jntuh.buildresume.fragments.WorkExperience;
+import com.example.jntuh.buildresume.model.SaveDataModel;
 import com.example.jntuh.buildresume.model.WorkExperienceModel;
+import com.example.jntuh.buildresume.realm.RealmController;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import io.realm.Realm;
 import io.realm.RealmList;
 
 /**
@@ -41,7 +45,8 @@ public class WorkExperienceListview extends ArrayAdapter<WorkExperienceModel>{
     public int currentposition;
     public ArrayList<WorkExperienceModel> experienceModels;
     public WorkExperienceModel workExperienceModel;
-    String toworkk = null;
+    public Realm realm;
+    String toworkk;
 
     public WorkExperienceListview(Activity activity, ArrayList<WorkExperienceModel> models) {
         super(activity,R.layout.addworkexperiencelistrow,models);
@@ -72,7 +77,7 @@ public class WorkExperienceListview extends ArrayAdapter<WorkExperienceModel>{
             currentposition = position;
             inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertview= inflater.inflate(R.layout.addworkexperiencelistrow, null,true);
-        ImageView edit = (ImageView)convertview.findViewById(R.id.editworkexperience);
+        final ImageView edit = (ImageView)convertview.findViewById(R.id.editworkexperience);
         ImageView delete = (ImageView)convertview.findViewById(R.id.deleteworkexperience);
         jobtitle = (TextView)convertview.findViewById(R.id.jobtitlelistrow);
         jobdescription = (TextView)convertview.findViewById(R.id.jobdescriptionlistrow);
@@ -104,7 +109,8 @@ public class WorkExperienceListview extends ArrayAdapter<WorkExperienceModel>{
                 final TextInputLayout comapnyName = (TextInputLayout)dialogView.findViewById(R.id.companyname);
                 final TextInputLayout fromWork = (TextInputLayout)dialogView.findViewById(R.id.workfrom);
                 final TextInputLayout toWork = (TextInputLayout)dialogView.findViewById(R.id.workto);
-                jobRole.getEditText().setText(((WorkExperienceModel) experienceModels.get(position)).getJobrole());
+
+                jobRole.getEditText().setText(((WorkExperienceModel) experienceModels.get(position)).getJobtitle());
                 jobDescription.getEditText().setText(((WorkExperienceModel) experienceModels.get(position)).getJobdescription());
                 comapnyName.getEditText().setText(((WorkExperienceModel) experienceModels.get(position)).getCompanyname());
                 fromWork.getEditText().setText(((WorkExperienceModel) experienceModels.get(position)).getFromwork());
@@ -199,15 +205,29 @@ public class WorkExperienceListview extends ArrayAdapter<WorkExperienceModel>{
                     public void onClick(View view) {
 
                         try{
-                            String jobtitle = jobRole.getEditText().getText().toString();
+                            final TextInputLayout jobRole = (TextInputLayout)dialogView.findViewById(R.id.jobtitle);
+                            final TextInputLayout jobDescription = (TextInputLayout)dialogView.findViewById(R.id.jobdescription);
+                            final TextInputLayout comapnyName = (TextInputLayout)dialogView.findViewById(R.id.companyname);
+                            final TextInputLayout fromWork = (TextInputLayout)dialogView.findViewById(R.id.workfrom);
+                            final TextInputLayout toWork = (TextInputLayout)dialogView.findViewById(R.id.workto);
+
+                            String jobtitlee = jobRole.getEditText().getText().toString();
                             String jobdes = jobDescription.getEditText().getText().toString();
                             String comname = comapnyName.getEditText().getText().toString();
-                            String fromwork = fromWork.getEditText().getText().toString();
+                            String fromworkk = fromWork.getEditText().getText().toString();
+                            String toworkk = toWork.getEditText().getText().toString();
 
-                            if(jobtitle==null||jobtitle==""||jobdes==""||jobdes==null||comname==null||comname==""||fromwork==null||fromwork==""||toworkk==null||toworkk==""){
+                            if(jobtitlee==null||jobtitlee==""||jobdes==""||jobdes==null||comname==null||comname==""||fromworkk==null||fromworkk==""||toworkk==null||toworkk==""){
                                 Toast.makeText(getContext(),"Should Be Fill All Fields",Toast.LENGTH_LONG).show();
                             }else{
-//                                educationQualification.saveDetails(jobrole,jobdes,comname,fromwork,towork,percentageType,graduationType);
+                                WorkExperienceModel experienceModel = new WorkExperienceModel();
+                                experienceModel.setJobtitle(jobtitlee);
+                                experienceModel.setCompanyname(comname);
+                                experienceModel.setJobdescription(jobdes);
+                                experienceModel.setFromwork(fromworkk);
+                                experienceModel.setTowork(toworkk);
+                                WorkExperience.experienceModels.set(position,experienceModel);
+                                notifyDataSetChanged();
                                 alertDialog.dismiss();
                             }
                         }catch (NullPointerException e){
@@ -250,6 +270,5 @@ public class WorkExperienceListview extends ArrayAdapter<WorkExperienceModel>{
         });
         return convertview;
     }
-
 
 }

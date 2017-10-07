@@ -74,7 +74,7 @@ public class RealmController {
         return realm.where(SaveDataModel.class).findAll();
     }
 
-    //query a single item with the given id
+    //query a single item with the given itemid
     public SaveDataModel getBook(String id) {
 
         return realm.where(SaveDataModel.class).equalTo("id", id).findFirst();
@@ -87,10 +87,10 @@ public class RealmController {
     }
 
     //query example
-    public RealmResults<SaveDataModel> queryedBooks() {
+    public RealmResults<SaveDataModel> queryedBooks(String profile) {
 
         return realm.where(SaveDataModel.class)
-                .contains("author", "Author 0")
+                .contains("profilename", profile)
                 .or()
                 .contains("title", "Realm")
                 .findAll();

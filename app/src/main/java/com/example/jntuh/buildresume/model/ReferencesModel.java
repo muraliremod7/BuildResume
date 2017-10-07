@@ -5,7 +5,6 @@ import io.realm.RealmObject;
 /**
  * Created by JNTUH on 10-09-2017.
  */
-
 public class ReferencesModel extends RealmObject {
 
     public ReferencesModel(String refname, String refdes, String reforganization, String refemail, String refmobilenum) {

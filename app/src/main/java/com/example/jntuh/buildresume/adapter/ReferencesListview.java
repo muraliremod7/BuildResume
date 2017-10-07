@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.jntuh.buildresume.R;
 import com.example.jntuh.buildresume.fragments.EducationQualification;
+import com.example.jntuh.buildresume.fragments.References;
 import com.example.jntuh.buildresume.model.ReferencesModel;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
@@ -34,7 +35,7 @@ public class ReferencesListview extends ArrayAdapter<ReferencesModel>{
     public final Activity activity;
     public int currentposition;
     public ArrayList<ReferencesModel> referencesModels;
-    ReferencesModel referencesModel = null;
+    ReferencesModel referencesModel;
 
 
     public ReferencesListview(Activity activity, ArrayList<ReferencesModel> peoplelist ) {
@@ -119,7 +120,14 @@ public class ReferencesListview extends ArrayAdapter<ReferencesModel>{
                             if(qualification==null||qualification==""||institutE==""||institutE==null||borunI==null||borunI==""||percga==null||percga==""||payear==null||payear==""){
                                 Toast.makeText(getContext(),"Should Be Fill All Fields",Toast.LENGTH_LONG).show();
                             }else{
-//                                educationQualification.saveDetails(jobrole,institutE,borunI,percga,payear,percentageType,graduationType);
+                                ReferencesModel referencesModel = new ReferencesModel();
+                                referencesModel.setRefname(qualification);
+                                referencesModel.setRefdes(institutE);
+                                referencesModel.setReforganization(borunI);
+                                referencesModel.setRefemail(percga);
+                                referencesModel.setRefmobilenum(payear);
+                                References.referencesModels.set(position,referencesModel);
+                                notifyDataSetChanged();
                                 alertDialog.dismiss();
                             }
                         }catch (NullPointerException e){

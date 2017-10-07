@@ -1,5 +1,6 @@
 package com.example.jntuh.buildresume.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
@@ -13,7 +14,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.example.jntuh.buildresume.R;
@@ -27,10 +27,8 @@ import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmResults;
 
 
 public class WorkExperience extends Fragment implements View.OnClickListener{
@@ -40,10 +38,17 @@ public class WorkExperience extends Fragment implements View.OnClickListener{
     public WorkExperienceListview workExperienceListview;
     String toworkk = null;
     public TextInputLayout fromWork,toWork;
+    private Realm realm;
     public WorkExperience() {
         // Required empty public constructor
     }
-
+    public static WorkExperience newInstance(){
+        return new WorkExperience();
+    }
+    @Override
+    public void onAttach(Activity activity){
+        super.onAttach(activity);
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,18 +60,18 @@ public class WorkExperience extends Fragment implements View.OnClickListener{
         // Inflate the layout for this fragment
         View itemview = inflater.inflate(R.layout.fragment_work_experience, container, false);
         listView = (ListView)itemview.findViewById(R.id.worklistview);
-        String itemId = ScrollableTabsActivity.id;
         actionButton = (FloatingActionButton)itemview.findViewById(R.id.addworkexperience);
+        actionButton.setOnClickListener(this);
+
         experienceModels = new ArrayList<>();
         workExperienceListview = new WorkExperienceListview(getActivity(), experienceModels);
-        actionButton.setOnClickListener(this);
+        String itemId = ScrollableTabsActivity.itemid;
         if(itemId==null){
 
         }
         else{
-
-            RealmController controller = new RealmController(getActivity().getApplication());
-            SaveDataModel saveDataModels = controller.getBook(itemId);
+            this.realm = RealmController.with(this).getRealm();
+            SaveDataModel saveDataModels = realm.where(SaveDataModel.class).equalTo("id", Integer.parseInt(itemId)).findFirst();
             experienceModels = new ArrayList<>(saveDataModels.getExperienceModels());
             workExperienceListview = new WorkExperienceListview(getActivity(), experienceModels);
             listView.setAdapter(workExperienceListview);
@@ -116,6 +121,7 @@ public class WorkExperience extends Fragment implements View.OnClickListener{
                                             public void onYearMonthSet(int year, int month) {
                                                 Calendar calendar = Calendar.getInstance();
                                                 calendar.set(Calendar.YEAR, year);
+                                                calendar.set(Calendar.MONTH, month);
                                                 calendar.set(Calendar.MONTH, month);
 
                                                 SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM yyyy");
@@ -212,7 +218,7 @@ public class WorkExperience extends Fragment implements View.OnClickListener{
         }
     }
 
-    private void workexperiencesaveDetails(String jobtitle, String jobdes, String comname, String fromwork, String toworkk) {
+    public void workexperiencesaveDetails(String jobtitle, String jobdes, String comname, String fromwork, String toworkk) {
         WorkExperienceModel experienceModel = new WorkExperienceModel();
         experienceModel.setJobtitle(jobtitle);
         experienceModel.setJobrole(jobtitle);

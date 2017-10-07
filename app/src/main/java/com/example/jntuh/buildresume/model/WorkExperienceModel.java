@@ -5,7 +5,6 @@ import io.realm.RealmObject;
 /**
  * Created by JNTUH on 10-09-2017.
  */
-
 public class WorkExperienceModel extends RealmObject {
 
     public WorkExperienceModel(String jobrole, String jobdescription, String companyname, String fromwork, String towork) {

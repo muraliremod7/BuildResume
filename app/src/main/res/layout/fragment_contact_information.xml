@@ -27,7 +27,7 @@
                     android:id="@+id/profileedit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter Profile Name"
+                    android:hint="Enter Unique Profile names"
                     android:inputType="textPersonName" />
 
             </android.support.design.widget.TextInputLayout>

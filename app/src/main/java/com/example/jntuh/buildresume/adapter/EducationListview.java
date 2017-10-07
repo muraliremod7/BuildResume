@@ -12,14 +12,19 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jntuh.buildresume.R;
+import com.example.jntuh.buildresume.ScrollableTabsActivity;
 import com.example.jntuh.buildresume.fragments.EducationQualification;
 import com.example.jntuh.buildresume.model.EducationModel;
+import com.example.jntuh.buildresume.model.SaveDataModel;
+import com.example.jntuh.buildresume.model.WorkExperienceModel;
+import com.example.jntuh.buildresume.realm.RealmController;
 import com.example.jntuh.buildresume.service.AlertDailogManager;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
@@ -27,18 +32,23 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import io.realm.Realm;
+import io.realm.RealmList;
+import io.realm.RealmResults;
+
 /**
  * Created by JNTUH on 10-09-2017.
  */
 
 public class EducationListview extends ArrayAdapter<EducationModel>{
-    TextView qualification, institute, board, percentagetype,percentage,graduationtype, yearofpassing;
+    TextView qualification, qinstitute, board, percentagetype,percentage,graduationtype, yearofpassing;
     public final Activity activity;
     public int currentposition;
     public ArrayList<EducationModel> educationmodel;
     RadioButton radioButton1,radioButton2;
     EducationModel educationModel;
     EducationQualification educationQualification;
+    private ListView listView;
     AlertDailogManager dailogManager = new AlertDailogManager();
 
     public EducationListview(Activity activity, ArrayList<EducationModel> peoplelist) {
@@ -47,7 +57,6 @@ public class EducationListview extends ArrayAdapter<EducationModel>{
         this.educationmodel = peoplelist;
 
     }
-
     @Override
     public int getCount() {
         return educationmodel.size();
@@ -70,10 +79,10 @@ public class EducationListview extends ArrayAdapter<EducationModel>{
             currentposition = position;
             inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         convertview= inflater.inflate(R.layout.addeducationlistrow, null, true);
-        ImageView edit = (ImageView)convertview.findViewById(R.id.editeducation);
+        final ImageView edit = (ImageView)convertview.findViewById(R.id.editeducation);
         ImageView delete = (ImageView)convertview.findViewById(R.id.deleteeducation);
         qualification = (TextView) convertview.findViewById(R.id.qualificationlistrow);
-        institute = (TextView)convertview.findViewById(R.id.institutelistrow);
+        qinstitute = (TextView)convertview.findViewById(R.id.institutelistrow);
         board = (TextView)convertview.findViewById(R.id.boardlistrow);
         yearofpassing = (TextView)convertview.findViewById(R.id.yearofpassinglistrow);
         percentagetype = (TextView)convertview.findViewById(R.id.percentagetypelistrow);
@@ -83,7 +92,7 @@ public class EducationListview extends ArrayAdapter<EducationModel>{
         educationModel =(EducationModel) getItem(position);
 
         qualification.setText(educationModel.getQualification());
-        institute.setText(educationModel.getInstitute());
+        qinstitute.setText(educationModel.getInstitute());
         board.setText(educationModel.getBoardUniversity());
         yearofpassing.setText(educationModel.getPassingYear());
         percentagetype.setText(educationModel.getGradingType());
@@ -95,7 +104,7 @@ public class EducationListview extends ArrayAdapter<EducationModel>{
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 LayoutInflater inflater = activity.getLayoutInflater();
                 final View dialogView = inflater.inflate(R.layout.addeducation, null);
-                builder.setTitle("Add Education Details");
+                builder.setTitle("Update Education Details");
                 builder.setView(dialogView);
                 final AlertDialog alertDialog = builder.create();
                 final RadioGroup dialogRadioGroup = (RadioGroup) dialogView.findViewById(R.id.percentype);
@@ -138,21 +147,29 @@ public class EducationListview extends ArrayAdapter<EducationModel>{
                     public void onClick(View view) {
                         int selectedId = dialogRadioGroup .getCheckedRadioButtonId();
                         int selectedId1 = dialogRadioGroup1 .getCheckedRadioButtonId();
-                        // find the radio button by returned id
+                        // find the radio button by returned itemid
                         radioButton1 = (RadioButton) dialogView.findViewById(selectedId);
                         radioButton2 = (RadioButton) dialogView.findViewById(selectedId1);
                         try{
                             String percentageType = radioButton1.getText().toString();
                             String graduationType = radioButton2.getText().toString();
-                            String qualification = qualificatioN.getEditText().getText().toString();
+                            String qualificationn = qualificatioN.getEditText().getText().toString();
                             String institutE = institute.getEditText().getText().toString();
                             String borunI = boruni.getEditText().getText().toString();
                             String percga = percentagecgpa.getEditText().getText().toString();
                             String payear = passingyear.getEditText().getText().toString();
-                            if(percentageType==null||percentageType==""||graduationType==null||graduationType==""||qualification==null||qualification==""||institutE==""||institutE==null||borunI==null||borunI==""||percga==null||percga==""||payear==null||payear==""){
+                            if(percentageType==null||percentageType==""||graduationType==null||graduationType==""||qualificationn==null||qualificationn==""||institutE==""||institutE==null||borunI==null||borunI==""||percga==null||percga==""||payear==null||payear==""){
                                 Toast.makeText(getContext(),"Should Be Fill All Fields",Toast.LENGTH_LONG).show();
                             }else{
-//                                educationQualification.saveDetails(jobrole,institutE,borunI,percga,payear,percentageType,graduationType);
+
+                                EducationModel educationModel = new EducationModel();
+                                educationModel.setQualification(qualificationn);
+                                educationModel.setInstitute(institutE);
+                                educationModel.setBoardUniversity(borunI);
+                                educationModel.setPercentage(percga);
+                                educationModel.setPassingYear(payear);
+                                EducationQualification.models.set(position,educationModel);
+                                notifyDataSetChanged();
                                 alertDialog.dismiss();
                             }
                         }catch (NullPointerException e){
