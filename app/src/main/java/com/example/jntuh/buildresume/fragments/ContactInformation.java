@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,11 +14,13 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -89,13 +92,27 @@ public class ContactInformation extends Fragment implements View.OnClickListener
         gender = (TextInputLayout)itemView.findViewById(R.id.gender);
         uploadphoto = (ImageView)itemView.findViewById(R.id.uploadPhoto);
         uploadphoto.setOnClickListener(this);
+
+
         uploadsign = (ImageView)itemView.findViewById(R.id.uploadSign);
         uploadsign.setOnClickListener(this);
+
+
         this.realm = RealmController.with(this).getRealm();
         String itemId = ScrollableTabsActivity.itemid;
 
         if(itemId == null){
-
+            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String previouslyEncodedImage = sharedPrefs.getString("imagePreferance", "");
+            if(previouslyEncodedImage==""){
+            }else{
+                uploadphoto.setImageBitmap(decodeBase64(previouslyEncodedImage));
+            }
+            String previouslyEncodedImag = sharedPrefs.getString("imagePreferanc", "");
+            if(previouslyEncodedImag==""){
+            }else{
+                uploadsign.setImageBitmap(decodeBase64(previouslyEncodedImag));
+            }
         }else{
             RealmController controller = new RealmController(getActivity().getApplication());
             SaveDataModel saveDataModels = realm.where(SaveDataModel.class).equalTo("id", Integer.parseInt(itemId)).findFirst();
@@ -120,6 +137,7 @@ public class ContactInformation extends Fragment implements View.OnClickListener
                 ByteArrayInputStream arrayInputStreamm = new ByteArrayInputStream(saveDataModels.getSignaturepic());
                 Bitmap bitmapp = BitmapFactory.decodeStream(arrayInputStreamm);
                 uploadsign.setImageBitmap(bitmapp);
+
             }catch (NullPointerException e){
 
             }
@@ -529,9 +547,29 @@ public class ContactInformation extends Fragment implements View.OnClickListener
                 e.printStackTrace();
             }
         }
-
-        uploadphoto.setImageBitmap(bm);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putString("imagePreferance", encodeTobase64(bm));
+        editor.commit();
+        String previouslyEncodedImage = sharedPrefs.getString("imagePreferance", "");
+        uploadphoto.setImageBitmap(decodeBase64(previouslyEncodedImage));
     }
+    public static String encodeTobase64(Bitmap image) {
+        Bitmap immage = image;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        immage.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
+
+        Log.d("Image Log:", imageEncoded);
+        return imageEncoded;
+    }
+    public static Bitmap decodeBase64(String input) {
+        byte[] decodedByte = Base64.decode(input, 0);
+        return BitmapFactory
+                .decodeByteArray(decodedByte, 0, decodedByte.length);
+    }
+
     @SuppressWarnings("deprecation")
     private void onSelectFromGalleryResult1(Intent data) {
 
@@ -544,7 +582,12 @@ public class ContactInformation extends Fragment implements View.OnClickListener
             }
         }
 
-        uploadsign.setImageBitmap(bm);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putString("imagePreferanc", encodeTobase64(bm));
+        editor.commit();
+        String previouslyEncodedImage = sharedPrefs.getString("imagePreferanc", "");
+        uploadsign.setImageBitmap(decodeBase64(previouslyEncodedImage));
     }
 
 }

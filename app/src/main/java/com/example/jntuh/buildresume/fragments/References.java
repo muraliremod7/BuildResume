@@ -1,6 +1,8 @@
 package com.example.jntuh.buildresume.fragments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -18,7 +20,11 @@ import com.example.jntuh.buildresume.adapter.ReferencesListview;
 import com.example.jntuh.buildresume.model.ReferencesModel;
 import com.example.jntuh.buildresume.model.SaveDataModel;
 import com.example.jntuh.buildresume.realm.RealmController;
+import com.example.jntuh.buildresume.service.AlertDailogManager;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import io.realm.Realm;
@@ -26,10 +32,12 @@ import io.realm.Realm;
 
 public class References extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
-    public static ArrayList<ReferencesModel> referencesModels =null;
+    public static ArrayList<ReferencesModel> referencesModels = new ArrayList<>();
+    public static ArrayList<ReferencesModel> referencesModelsup;
     public ListView listView;
     ReferencesListview referencesListview;
     private Realm realm;
+    String itemId;
     public References() {
         // Required empty public constructor
     }
@@ -46,19 +54,54 @@ public class References extends Fragment implements View.OnClickListener{
         View itemView = inflater.inflate(R.layout.fragment_references, container, false);
         actionButton = (FloatingActionButton)itemView.findViewById(R.id.addrefe);
         actionButton.setOnClickListener(this);
-        referencesModels = new ArrayList<ReferencesModel>();
-        referencesListview = new ReferencesListview(getActivity(), referencesModels);
         listView = (ListView)itemView.findViewById(R.id.addreflistview);
-        this.realm = RealmController.with(this).getRealm();
-        String itemId = ScrollableTabsActivity.itemid;
-        if(itemId==null){
 
+        this.realm = RealmController.with(this).getRealm();
+        itemId = ScrollableTabsActivity.itemid;
+        if(itemId==null){
+            try{
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("RefList", null);
+                Type type = new TypeToken<ArrayList<ReferencesModel>>() {}.getType();
+                referencesModels = gson.fromJson(json, type);
+
+                if(referencesModels==null){
+                    referencesModels = new ArrayList<>();
+                }else{
+                    referencesListview = new ReferencesListview(getActivity(), referencesModels);
+                    listView.setAdapter(referencesListview);
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
         }else {
             SaveDataModel saveDataModels = realm.where(SaveDataModel.class).equalTo("id", Integer.parseInt(itemId)).findFirst();
-            referencesModels = new ArrayList<>(saveDataModels.getReferencesModels());
-            referencesListview = new ReferencesListview(getActivity(), referencesModels);
+            referencesModelsup = new ArrayList<>(saveDataModels.getReferencesModels());
+            referencesListview = new ReferencesListview(getActivity(), referencesModelsup);
             listView.setAdapter(referencesListview);
             referencesListview.notifyDataSetInvalidated();
+            try{
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("RefList", null);
+                Type type = new TypeToken<ArrayList<ReferencesModel>>() {}.getType();
+                referencesModels = gson.fromJson(json, type);
+
+                if(referencesModels==null){
+                    referencesModels = new ArrayList<>();
+                    referencesListview = new ReferencesListview(getActivity(), referencesModelsup);
+                    listView.setAdapter(referencesListview);
+                    referencesListview.notifyDataSetInvalidated();
+                }else{
+                    referencesModelsup.addAll(referencesModels);
+                    referencesListview = new ReferencesListview(getActivity(), referencesModelsup);
+                    listView.setAdapter(referencesListview);
+                    referencesListview.notifyDataSetChanged();
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
         };
         return itemView;
     }
@@ -79,7 +122,8 @@ public class References extends Fragment implements View.OnClickListener{
                 final TextInputLayout reforg = (TextInputLayout)dialogView.findViewById(R.id.reforganization);
                 final TextInputLayout refemail = (TextInputLayout)dialogView.findViewById(R.id.refemail);
                 final TextInputLayout refmobile = (TextInputLayout)dialogView.findViewById(R.id.refmobile);
-
+                final String semailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+                final String mobileval = "^[789]\\d{9}$";
                 Button save = (Button)dialogView.findViewById(R.id.save_reference);
                 Button cancel = (Button)dialogView.findViewById(R.id.cancel_reference);
                 save.setOnClickListener(new View.OnClickListener() {
@@ -95,6 +139,12 @@ public class References extends Fragment implements View.OnClickListener{
                             String teamMem = refmobile.getEditText().getText().toString();
                             if(projectDesc==""||projectDesc==null||yourRole==null||yourRole==""||duratIon==null||duratIon==""||teamMem==null||teamMem==""){
                                 Toast.makeText(getContext(),"Should Be Fill All Fields",Toast.LENGTH_LONG).show();
+                            }else if(!duratIon.matches(semailPattern)){
+                                AlertDailogManager dailogManager = new AlertDailogManager();
+                                dailogManager.showAlertDialog(getContext(),"Enter Correct Email",false);
+                            }else if(!teamMem.matches(mobileval)){
+                                AlertDailogManager dailogManager = new AlertDailogManager();
+                                dailogManager.showAlertDialog(getContext(),"Enter Correct Mobile Number",false);
                             }else{
                                 projectdetailssaveDetails(projectTitle,projectDesc,yourRole,duratIon,teamMem);
                                 alertDialog.dismiss();
@@ -116,8 +166,34 @@ public class References extends Fragment implements View.OnClickListener{
     }
     private void projectdetailssaveDetails(String projectTitle, String projectDesc, String yourRole, String duratIon, String teamMem) {
         ReferencesModel projectDetailModel = new ReferencesModel(projectTitle,projectDesc,yourRole,duratIon,teamMem);
-        referencesModels.add(projectDetailModel);
-        listView.setAdapter(referencesListview);
-        referencesListview.notifyDataSetInvalidated();
+        if(itemId==null){
+            referencesModels.add(projectDetailModel);
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(referencesModels);
+            prefsEditor.putString("RefList", json);
+            prefsEditor.commit();
+            referencesListview = new ReferencesListview(getActivity(),referencesModels);
+            listView.setAdapter(referencesListview);
+            referencesListview.notifyDataSetInvalidated();
+        }else {
+            referencesModels.removeAll(referencesModelsup);
+            referencesModels.add(projectDetailModel);
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(referencesModels);
+            prefsEditor.putString("RefList", json);
+            prefsEditor.commit();
+            referencesModels.addAll(referencesModelsup);
+            referencesListview = new ReferencesListview(getActivity(),referencesModels);
+            referencesModelsup.addAll(referencesModels);
+            listView.setAdapter(referencesListview);
+            referencesListview.notifyDataSetInvalidated();
+        }
+
     }
 }

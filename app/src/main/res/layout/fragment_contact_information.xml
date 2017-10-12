@@ -27,7 +27,7 @@
                     android:id="@+id/profileedit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter Unique Profile names"
+                    android:hint="Enter Profile name"
                     android:inputType="textPersonName" />
 
             </android.support.design.widget.TextInputLayout>
@@ -88,7 +88,7 @@
                     android:id="@+id/addressedit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter Adress"
+                    android:hint="Enter Address"
                     android:inputType="textMultiLine" />
 
             </android.support.design.widget.TextInputLayout>
@@ -102,6 +102,7 @@
                 <EditText
                     android:clickable="true"
                     android:editable="false"
+                    android:cursorVisible="false"
                     android:id="@+id/dateofbirthedit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -118,11 +119,11 @@
                 <EditText
                     android:clickable="true"
                     android:editable="false"
+                    android:cursorVisible="false"
                     android:id="@+id/maritialstatusedit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Marital Status"
-                    android:inputType="text" />
+                    android:hint="Marital Status" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -166,7 +167,7 @@
                     android:id="@+id/countryedit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Contry"
+                    android:hint="Country"
                     android:inputType="text" />
 
             </android.support.design.widget.TextInputLayout>
@@ -195,11 +196,11 @@
                 <EditText
                     android:clickable="true"
                     android:editable="false"
+                    android:cursorVisible="false"
                     android:id="@+id/genderedit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Gender"
-                    android:inputType="text" />
+                    android:hint="Gender" />
 
             </android.support.design.widget.TextInputLayout>
 

@@ -1,7 +1,9 @@
 package com.example.jntuh.buildresume.fragments;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -22,8 +24,11 @@ import com.example.jntuh.buildresume.adapter.WorkExperienceListview;
 import com.example.jntuh.buildresume.model.SaveDataModel;
 import com.example.jntuh.buildresume.model.WorkExperienceModel;
 import com.example.jntuh.buildresume.realm.RealmController;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,12 +38,14 @@ import io.realm.Realm;
 
 public class WorkExperience extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
-    public static ArrayList<WorkExperienceModel> experienceModels;
+    public static ArrayList<WorkExperienceModel> experienceModels = new ArrayList<>();
     public ListView listView;
     public WorkExperienceListview workExperienceListview;
     String toworkk = null;
     public TextInputLayout fromWork,toWork;
     private Realm realm;
+    public static ArrayList<WorkExperienceModel> wemodels;
+    public String itemId;
     public WorkExperience() {
         // Required empty public constructor
     }
@@ -62,20 +69,56 @@ public class WorkExperience extends Fragment implements View.OnClickListener{
         listView = (ListView)itemview.findViewById(R.id.worklistview);
         actionButton = (FloatingActionButton)itemview.findViewById(R.id.addworkexperience);
         actionButton.setOnClickListener(this);
+        this.realm = RealmController.with(this).getRealm();
 
-        experienceModels = new ArrayList<>();
-        workExperienceListview = new WorkExperienceListview(getActivity(), experienceModels);
-        String itemId = ScrollableTabsActivity.itemid;
+        itemId = ScrollableTabsActivity.itemid;
         if(itemId==null){
+            try{
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("ExpList", null);
+                Type type = new TypeToken<ArrayList<WorkExperienceModel>>() {}.getType();
+                experienceModels = gson.fromJson(json, type);
 
+                if(experienceModels==null){
+                    experienceModels = new ArrayList<>();
+                }else{
+                    workExperienceListview = new WorkExperienceListview(getActivity(), experienceModels);
+                    listView.setAdapter(workExperienceListview);
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
         }
         else{
-            this.realm = RealmController.with(this).getRealm();
+
             SaveDataModel saveDataModels = realm.where(SaveDataModel.class).equalTo("id", Integer.parseInt(itemId)).findFirst();
-            experienceModels = new ArrayList<>(saveDataModels.getExperienceModels());
-            workExperienceListview = new WorkExperienceListview(getActivity(), experienceModels);
+            wemodels = new ArrayList<>(saveDataModels.getExperienceModels());
+            workExperienceListview = new WorkExperienceListview(getActivity(), wemodels);
             listView.setAdapter(workExperienceListview);
-            workExperienceListview.notifyDataSetInvalidated();
+            workExperienceListview.notifyDataSetChanged();
+            try{
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("ExpList", null);
+                Type type = new TypeToken<ArrayList<WorkExperienceModel>>() {}.getType();
+                experienceModels = gson.fromJson(json, type);
+
+                if(experienceModels==null){
+                    experienceModels = new ArrayList<>();
+                    workExperienceListview = new WorkExperienceListview(getActivity(), wemodels);
+                    listView.setAdapter(workExperienceListview);
+                    workExperienceListview.notifyDataSetChanged();
+                }else{
+                    wemodels.addAll(experienceModels);
+                    workExperienceListview = new WorkExperienceListview(getActivity(), wemodels);
+                    listView.setAdapter(workExperienceListview);
+                    workExperienceListview.notifyDataSetChanged();
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+
         }
         return itemview;
     }
@@ -226,9 +269,35 @@ public class WorkExperience extends Fragment implements View.OnClickListener{
         experienceModel.setCompanyname(comname);
         experienceModel.setFromwork(fromwork);
         experienceModel.setTowork(toworkk);
-        experienceModels.add(experienceModel);
-        listView.setAdapter(workExperienceListview);
-        workExperienceListview.notifyDataSetChanged();
+        if(itemId==null){
+            experienceModels.add(experienceModel);
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(experienceModels);
+            prefsEditor.putString("ExpList", json);
+            prefsEditor.commit();
+            workExperienceListview = new WorkExperienceListview(getActivity(),experienceModels);
+            listView.setAdapter(workExperienceListview);
+            workExperienceListview.notifyDataSetChanged();
+        }else{
+            experienceModels.removeAll(wemodels);
+            experienceModels.add(experienceModel);
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(experienceModels);
+            prefsEditor.putString("ExpList", json);
+            prefsEditor.commit();
+            experienceModels.addAll(wemodels);
+            workExperienceListview = new WorkExperienceListview(getActivity(),experienceModels);
+            wemodels.add(experienceModel);
+            listView.setAdapter(workExperienceListview);
+            workExperienceListview.notifyDataSetChanged();
+        }
+
     }
 
 }

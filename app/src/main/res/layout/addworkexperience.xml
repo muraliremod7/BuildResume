@@ -68,12 +68,14 @@
             android:layout_height="wrap_content">
 
             <EditText
+                android:clickable="true"
+                android:editable="false"
+                android:cursorVisible="false"
                 android:paddingLeft="20dp"
                 android:id="@+id/workfromedit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="From Work"
-                android:inputType="text" />
+                android:hint="From Work" />
 
         </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
@@ -86,10 +88,13 @@
             <EditText
                 android:paddingLeft="20dp"
                 android:id="@+id/worktoedit"
+                android:clickable="true"
+                android:editable="false"
+                android:cursorVisible="false"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="To Work"
-                android:inputType="text" />
+                />
 
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>

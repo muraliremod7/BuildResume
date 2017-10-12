@@ -1,6 +1,8 @@
 package com.example.jntuh.buildresume.fragments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -21,8 +23,11 @@ import com.example.jntuh.buildresume.adapter.ProjectDetailsListview;
 import com.example.jntuh.buildresume.model.ProjectDetailModel;
 import com.example.jntuh.buildresume.model.SaveDataModel;
 import com.example.jntuh.buildresume.realm.RealmController;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,11 +37,13 @@ import io.realm.Realm;
 
 public class Projects extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
-    public static ArrayList<ProjectDetailModel> detailModels=null;
+    public static ArrayList<ProjectDetailModel> detailModels;
     public ListView listView;
     ProjectDetailsListview detailsListview;
     private Realm realm;
     String toworkk = null;
+    String itemId;
+    public static ArrayList<ProjectDetailModel> pdmodels;
     public Projects() {
         // Required empty public constructor
     }
@@ -53,19 +60,56 @@ public class Projects extends Fragment implements View.OnClickListener{
         View itemView =  inflater.inflate(R.layout.fragment_projects, container, false);
         actionButton = (FloatingActionButton)itemView.findViewById(R.id.addprojects);
         actionButton.setOnClickListener(this);
-        detailModels = new ArrayList<ProjectDetailModel>();
-        detailsListview = new ProjectDetailsListview(getActivity(),detailModels);
         listView = (ListView)itemView.findViewById(R.id.projectlistview);
-        String itemId = ScrollableTabsActivity.itemid;
+        detailModels = new ArrayList<>();
+
+        itemId = ScrollableTabsActivity.itemid;
         this.realm = RealmController.with(this).getRealm();
         if(itemId==null){
+            try{
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("PrjList", null);
+                Type type = new TypeToken<ArrayList<ProjectDetailModel>>() {}.getType();
+                detailModels = gson.fromJson(json, type);
 
+                if(detailModels==null){
+                    detailModels = new ArrayList<>();
+                }else{
+                    detailsListview = new ProjectDetailsListview(getActivity(), detailModels);
+                    listView.setAdapter(detailsListview);
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
         }else {
             SaveDataModel saveDataModels = realm.where(SaveDataModel.class).equalTo("id", Integer.parseInt(itemId)).findFirst();
-            detailModels = new ArrayList<>(saveDataModels.getProjectDetailModels());
-            detailsListview = new ProjectDetailsListview(getActivity(), detailModels);
+            pdmodels = new ArrayList<>(saveDataModels.getProjectDetailModels());
+            detailsListview = new ProjectDetailsListview(getActivity(), pdmodels);
             listView.setAdapter(detailsListview);
             detailsListview.notifyDataSetInvalidated();
+            try{
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("PrjList", null);
+                Type type = new TypeToken<ArrayList<ProjectDetailModel>>() {}.getType();
+                detailModels = gson.fromJson(json, type);
+
+                if(detailModels==null){
+                    detailModels = new ArrayList<>();
+                    detailsListview = new ProjectDetailsListview(getActivity(), pdmodels);
+                    listView.setAdapter(detailsListview);
+                    detailsListview.notifyDataSetChanged();
+                }else{
+                    pdmodels.addAll(detailModels);
+                    detailsListview = new ProjectDetailsListview(getActivity(), pdmodels);
+                    listView.setAdapter(detailsListview);
+                    detailsListview.notifyDataSetChanged();
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+
         };
         return itemView;
     }
@@ -209,9 +253,34 @@ public class Projects extends Fragment implements View.OnClickListener{
 
     private void projectdetailssaveDetails(String projectTitle, String projectDesc, String yourRole, String duratIon,String durationto, String teamMem) {
         ProjectDetailModel projectDetailModel = new ProjectDetailModel(projectTitle,projectDesc,yourRole,duratIon,durationto,teamMem);
-        detailModels.add(projectDetailModel);
-        detailsListview = new ProjectDetailsListview(getActivity(),detailModels);
-        listView.setAdapter(detailsListview);
-        detailsListview.notifyDataSetInvalidated();
+        if(itemId==null){
+            detailModels.add(projectDetailModel);
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(detailModels);
+            prefsEditor.putString("PrjList", json);
+            prefsEditor.commit();
+            detailsListview = new ProjectDetailsListview(getActivity(),detailModels);
+            listView.setAdapter(detailsListview);
+            detailsListview.notifyDataSetInvalidated();
+        }else{
+            detailModels.removeAll(pdmodels);
+            detailModels.add(projectDetailModel);
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(detailModels);
+            prefsEditor.putString("PrjList", json);
+            prefsEditor.commit();
+            detailModels.addAll(pdmodels);
+            detailsListview = new ProjectDetailsListview(getActivity(),detailModels);
+            pdmodels.add(projectDetailModel);
+            listView.setAdapter(detailsListview);
+            detailsListview.notifyDataSetInvalidated();
+        }
+
     }
 }

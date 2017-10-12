@@ -2,9 +2,11 @@ package com.example.jntuh.buildresume;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -77,9 +79,9 @@ public class ScrollableTabsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         itemid = intent.getStringExtra("itemid");
         if(itemid==null){
-
+            getSupportActionBar().setTitle("Create Profile");
         }else{
-
+            getSupportActionBar().setTitle("Update Profile");
         }
     }
 
@@ -243,6 +245,19 @@ public class ScrollableTabsActivity extends AppCompatActivity {
                             realm.copyToRealm(book);
                             Toast.makeText(ScrollableTabsActivity.this,"Data Saved",Toast.LENGTH_LONG).show();
                             Intent intent = new Intent(ScrollableTabsActivity.this,ShowDataActivity.class);
+                            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            SharedPreferences.Editor editor = sharedPrefs.edit();
+                            editor.remove("EduList");
+                            editor.remove("ExpList");
+                            editor.remove("RefList");
+                            editor.remove("PrjList");
+                            editor.remove("Lanlist");
+                            editor.remove("Hobbyslist");
+                            editor.remove("Achlist");
+                            editor.remove("Skillslist");
+                            editor.remove("imagePreferanc");
+                            editor.remove("imagePreferance");
+                            editor.commit();
                             startActivity(intent);
                             this.finish();
                         }
@@ -285,36 +300,36 @@ public class ScrollableTabsActivity extends AppCompatActivity {
                     book.setCareerobjective(careerObjective.textInputLayout.getEditText().getText().toString());
 
                 }
-                if(qualification.models==null){
+                if(qualification.models1==null){
 
                 }else{
-                    RealmList<EducationModel> realmListFriends = new RealmList<EducationModel>(qualification.models.toArray(new EducationModel[qualification.models.size()]));
+                    RealmList<EducationModel> realmListFriends = new RealmList<EducationModel>(qualification.models1.toArray(new EducationModel[qualification.models1.size()]));
                     book.setEducationModels(realmListFriends);
                 }
-                if(experience.experienceModels==null){
+                if(experience.wemodels==null){
 
                 }else{
-                    book.setExperienceModels(new RealmList<WorkExperienceModel>(experience.experienceModels.toArray(new WorkExperienceModel[experience.experienceModels.size()])));
+                    book.setExperienceModels(new RealmList<WorkExperienceModel>(experience.wemodels.toArray(new WorkExperienceModel[experience.wemodels.size()])));
 
                 }
-                if(projects.detailModels==null){
+                if(projects.pdmodels==null){
 
                 }else{
-                    book.setProjectDetailModels(new RealmList<ProjectDetailModel>(projects.detailModels.toArray(new ProjectDetailModel[projects.detailModels.size()])));
+                    book.setProjectDetailModels(new RealmList<ProjectDetailModel>(projects.pdmodels.toArray(new ProjectDetailModel[projects.pdmodels.size()])));
 
                 }
-                if(other.detailModels==null||other.detailModels1==null||other.detailModels2==null||other.detailModels3==null){
+                if(other.detailModelsup==null||other.detailModels1up==null||other.detailModels2up==null||other.detailModels3up==null){
 
                 }else{
-                    book.setOthersModelsskills(new RealmList<OthersModel>(other.detailModels.toArray(new OthersModel[other.detailModels.size()])));
-                    book.setOthersModelsache(new RealmList<OthersModel>(other.detailModels1.toArray(new OthersModel[other.detailModels1.size()])));
-                    book.setOthersModelshobbys(new RealmList<OthersModel>(other.detailModels2.toArray(new OthersModel[other.detailModels2.size()])));
-                    book.setOthersModelslan(new RealmList<OthersModel>(other.detailModels3.toArray(new OthersModel[other.detailModels3.size()])));
+                    book.setOthersModelsskills(new RealmList<OthersModel>(other.detailModelsup.toArray(new OthersModel[other.detailModelsup.size()])));
+                    book.setOthersModelsache(new RealmList<OthersModel>(other.detailModels1up.toArray(new OthersModel[other.detailModels1up.size()])));
+                    book.setOthersModelshobbys(new RealmList<OthersModel>(other.detailModels2up.toArray(new OthersModel[other.detailModels2up.size()])));
+                    book.setOthersModelslan(new RealmList<OthersModel>(other.detailModels3up.toArray(new OthersModel[other.detailModels3up.size()])));
                 }
-                if(references.referencesModels==null){
+                if(references.referencesModelsup==null){
 
                 }else{
-                    book.setReferencesModels(new RealmList<ReferencesModel>(references.referencesModels.toArray(new ReferencesModel[references.referencesModels.size()])));
+                    book.setReferencesModels(new RealmList<ReferencesModel>(references.referencesModelsup.toArray(new ReferencesModel[references.referencesModelsup.size()])));
                 }
                 if(declaration.textInputLayout==null){
 
@@ -341,6 +356,19 @@ public class ScrollableTabsActivity extends AppCompatActivity {
                     realm.commitTransaction();
                     Toast.makeText(ScrollableTabsActivity.this,"Data Saved",Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(ScrollableTabsActivity.this,ShowDataActivity.class);
+                    SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    SharedPreferences.Editor editor = sharedPrefs.edit();
+                    editor.remove("EduList");
+                    editor.remove("ExpList");
+                    editor.remove("RefList");
+                    editor.remove("PrjList");
+                    editor.remove("Lanlist");
+                    editor.remove("Hobbyslist");
+                    editor.remove("Achlist");
+                    editor.remove("Skillslist");
+                    editor.remove("imagePreferanc");
+                    editor.remove("imagePreferance");
+                    editor.commit();
                     startActivity(intent);
                     this.finish();
                 }
@@ -364,12 +392,25 @@ public class ScrollableTabsActivity extends AppCompatActivity {
     protected void exitByBackKey() {
 
         AlertDialog alertbox = new AlertDialog.Builder(this,R.style.MyAlertDialogStyle)
-                .setMessage("If you want save your data click Save else click on No")
+                .setMessage("If you want save your data click Yes else click on No")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
                     // do something when the button is clicked
                     public void onClick(DialogInterface arg0, int arg1) {
                         saveData();
+                        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        SharedPreferences.Editor editor = sharedPrefs.edit();
+                        editor.remove("EduList");
+                        editor.remove("ExpList");
+                        editor.remove("RefList");
+                        editor.remove("PrjList");
+                        editor.remove("Lanlist");
+                        editor.remove("Hobbyslist");
+                        editor.remove("Achlist");
+                        editor.remove("Skillslist");
+                        editor.remove("imagePreferanc");
+                        editor.remove("imagePreferance");
+                        editor.commit();
                         finish();
                         //close();
                     }
@@ -380,6 +421,19 @@ public class ScrollableTabsActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int arg1) {
                         Intent intent = new Intent(ScrollableTabsActivity.this,ShowDataActivity.class);
                         startActivity(intent);
+                        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        SharedPreferences.Editor editor = sharedPrefs.edit();
+                        editor.remove("EduList");
+                        editor.remove("ExpList");
+                        editor.remove("RefList");
+                        editor.remove("PrjList");
+                        editor.remove("Lanlist");
+                        editor.remove("Hobbyslist");
+                        editor.remove("Achlist");
+                        editor.remove("Skillslist");
+                        editor.remove("imagePreferanc");
+                        editor.remove("imagePreferance");
+                        editor.commit();
                     finish();
                     }
                 })

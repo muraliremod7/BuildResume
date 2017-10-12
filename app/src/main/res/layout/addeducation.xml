@@ -108,7 +108,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="Pusuing" />
+            android:text="pursuing" />
     </RadioGroup>
 
     <android.support.design.widget.TextInputLayout
@@ -118,11 +118,13 @@
         android:layout_height="wrap_content">
 
         <EditText
+            android:clickable="true"
+            android:editable="false"
+            android:cursorVisible="false"
             android:id="@+id/passingyearedit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Passing Year"
-            android:inputType="number" />
+            android:hint="Passing Year" />
 
     </android.support.design.widget.TextInputLayout>
 

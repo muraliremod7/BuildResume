@@ -41,15 +41,24 @@ import io.realm.RealmResults;
  */
 
 public class EducationListview extends ArrayAdapter<EducationModel>{
-    TextView qualification, qinstitute, board, percentagetype,percentage,graduationtype, yearofpassing;
+   // TextView qualification, qinstitute, board, percentagetype,percentage,graduationtype, yearofpassing;
     public final Activity activity;
     public int currentposition;
     public ArrayList<EducationModel> educationmodel;
+
     RadioButton radioButton1,radioButton2;
-    EducationModel educationModel;
-    EducationQualification educationQualification;
-    private ListView listView;
-    AlertDailogManager dailogManager = new AlertDailogManager();
+    // View lookup cache
+    private static class ViewHolder {
+        TextView qualification;
+        TextView qinstitute;
+        TextView board;
+        TextView percentagetype;
+        TextView percentage;
+        TextView graduationtype;
+        TextView yearofpassing;
+        ImageView delete;
+        ImageView edit;
+    }
 
     public EducationListview(Activity activity, ArrayList<EducationModel> peoplelist) {
         super(activity,R.layout.addeducationlistrow,peoplelist);
@@ -75,30 +84,42 @@ public class EducationListview extends ArrayAdapter<EducationModel>{
     @Override
     public View getView(final int position, View convertview, ViewGroup parent) {
         LayoutInflater inflater = activity.getLayoutInflater();
-        if (inflater == null)
-            currentposition = position;
-            inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        convertview= inflater.inflate(R.layout.addeducationlistrow, null, true);
-        final ImageView edit = (ImageView)convertview.findViewById(R.id.editeducation);
-        ImageView delete = (ImageView)convertview.findViewById(R.id.deleteeducation);
-        qualification = (TextView) convertview.findViewById(R.id.qualificationlistrow);
-        qinstitute = (TextView)convertview.findViewById(R.id.institutelistrow);
-        board = (TextView)convertview.findViewById(R.id.boardlistrow);
-        yearofpassing = (TextView)convertview.findViewById(R.id.yearofpassinglistrow);
-        percentagetype = (TextView)convertview.findViewById(R.id.percentagetypelistrow);
-        percentage = (TextView)convertview.findViewById(R.id.percentagelistrow);
-        graduationtype = (TextView)convertview.findViewById(R.id.graduationtypelistrow);
+        ViewHolder viewHolder;
+        final EducationModel educationModel =(EducationModel) getItem(position);
+        final View result;
+        if (inflater == null){
 
-        educationModel =(EducationModel) getItem(position);
+        }
+            if(convertview==null){
+                viewHolder = new ViewHolder();
+                currentposition = position;
+                inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertview= inflater.inflate(R.layout.addeducationlistrow, null, true);
+                viewHolder.edit = (ImageView)convertview.findViewById(R.id.editeducation);
+                viewHolder.delete = (ImageView)convertview.findViewById(R.id.deleteeducation);
+                viewHolder.qualification = (TextView) convertview.findViewById(R.id.qualificationlistrow);
+                viewHolder.qinstitute = (TextView)convertview.findViewById(R.id.institutelistrow);
+                viewHolder.board = (TextView)convertview.findViewById(R.id.boardlistrow);
+                viewHolder.yearofpassing = (TextView)convertview.findViewById(R.id.yearofpassinglistrow);
+                viewHolder.percentagetype = (TextView)convertview.findViewById(R.id.percentagetypelistrow);
+                viewHolder.percentage = (TextView)convertview.findViewById(R.id.percentagelistrow);
+                viewHolder.graduationtype = (TextView)convertview.findViewById(R.id.graduationtypelistrow);
+                result=convertview;
+                convertview.setTag(viewHolder);
+            }else{
+                viewHolder = (ViewHolder) convertview.getTag();
+                result=convertview;
+            }
 
-        qualification.setText(educationModel.getQualification());
-        qinstitute.setText(educationModel.getInstitute());
-        board.setText(educationModel.getBoardUniversity());
-        yearofpassing.setText(educationModel.getPassingYear());
-        percentagetype.setText(educationModel.getGradingType());
-        percentage.setText(educationModel.getPercentage());
-        graduationtype.setText(educationModel.getGraduationType());
-        edit.setOnClickListener(new View.OnClickListener() {
+
+        viewHolder.qualification.setText(educationModel.getQualification());
+        viewHolder.qinstitute.setText(educationModel.getInstitute());
+        viewHolder.board.setText(educationModel.getBoardUniversity());
+        viewHolder.yearofpassing.setText(educationModel.getPassingYear());
+        viewHolder.percentagetype.setText(educationModel.getGradingType());
+        viewHolder.percentage.setText(educationModel.getPercentage());
+        viewHolder.graduationtype.setText(educationModel.getGraduationType());
+        viewHolder.edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -186,7 +207,7 @@ public class EducationListview extends ArrayAdapter<EducationModel>{
                 alertDialog.show();
             }
         });
-        delete.setOnClickListener(new View.OnClickListener() {
+        viewHolder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext(),R.style.MyAlertDialogStyle);
@@ -196,7 +217,7 @@ public class EducationListview extends ArrayAdapter<EducationModel>{
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Toast.makeText(getContext(),"Deleted",Toast.LENGTH_LONG).show();
-                        educationmodel.remove(educationmodel.get(currentposition));
+                        educationmodel.remove((EducationModel) getItem(position));
                         notifyDataSetChanged();
                     }
                 });

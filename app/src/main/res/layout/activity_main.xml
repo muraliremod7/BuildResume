@@ -35,7 +35,7 @@
                     android:textSize="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:text="Make Easy To Preapare Your Profile"
+                    android:text="Make Easy To Prepare Your Profile"
                     android:gravity="center"
                     android:textStyle="bold"
                     android:textColor="@color/textColor"/>

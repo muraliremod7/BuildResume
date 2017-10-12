@@ -69,11 +69,14 @@
             android:layout_height="wrap_content">
 
             <EditText
+                android:clickable="true"
+                android:editable="false"
+                android:cursorVisible="false"
                 android:id="@+id/durationfromedit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Duration From"
-                android:inputType="text" />
+                />
 
         </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
@@ -84,11 +87,13 @@
             android:layout_height="wrap_content">
 
             <EditText
+                android:clickable="true"
+                android:editable="false"
+                android:cursorVisible="false"
                 android:id="@+id/durationtoedit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Duration To"
-                android:inputType="text" />
+                android:hint="Duration To" />
 
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>

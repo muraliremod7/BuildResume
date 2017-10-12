@@ -1,7 +1,10 @@
 package com.example.jntuh.buildresume.fragments;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -10,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -23,26 +25,36 @@ import com.example.jntuh.buildresume.adapter.EducationListview;
 import com.example.jntuh.buildresume.model.EducationModel;
 import com.example.jntuh.buildresume.model.SaveDataModel;
 import com.example.jntuh.buildresume.realm.RealmController;
+import com.example.jntuh.buildresume.service.AlertDailogManager;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.twinkle94.monthyearpicker.picker.YearMonthPickerDialog;
 
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
+import static android.R.id.list;
+
 
 public class EducationQualification extends Fragment implements View.OnClickListener{
     public FloatingActionButton actionButton;
     RadioButton radioButton1,radioButton2;
-    public static ArrayList<EducationModel> models;
+    public static ArrayList<EducationModel> models = new ArrayList<>();
     public ListView listView;
-    public static EducationListview edulistview;
+    public  EducationListview edulistview;
     public String itemId;
     private Realm realm;
     private static EducationQualification instance;
+    public static ArrayList<EducationModel> models1;
     public EducationQualification() {
         // Required empty public constructor
     }
@@ -62,7 +74,6 @@ public class EducationQualification extends Fragment implements View.OnClickList
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -72,18 +83,52 @@ public class EducationQualification extends Fragment implements View.OnClickList
         actionButton.setOnClickListener(this);
         listView = (ListView)itemView.findViewById(R.id.edulistview);
         this.realm = RealmController.with(this).getRealm();
-        models = new ArrayList<EducationModel>();
-        edulistview = new EducationListview(getActivity(),models);
         itemId = ScrollableTabsActivity.itemid;
+
         if(itemId==null){
+            try{
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("EduList", null);
+                Type type = new TypeToken<ArrayList<EducationModel>>() {}.getType();
+                models = gson.fromJson(json, type);
 
+                if(models==null){
+                    models = new ArrayList<>();
+                }else{
+                    edulistview = new EducationListview(getActivity(), models);
+                    listView.setAdapter(edulistview);
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
         }else{
-
             SaveDataModel saveDataModels = realm.where(SaveDataModel.class).equalTo("id", Integer.parseInt(itemId)).findFirst();
-            models = new ArrayList<>(saveDataModels.getEducationModels());
-            edulistview = new EducationListview(getActivity(), models);
+            models1 = new ArrayList<>(saveDataModels.getEducationModels());
+            edulistview = new EducationListview(getActivity(), models1);
             listView.setAdapter(edulistview);
             edulistview.notifyDataSetInvalidated();
+            try{
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("EduList", null);
+                Type type = new TypeToken<ArrayList<EducationModel>>() {}.getType();
+                models = gson.fromJson(json, type);
+                if(models==null){
+                    models = new ArrayList<>();
+                    edulistview = new EducationListview(getActivity(), models1);
+                    listView.setAdapter(edulistview);
+                    edulistview.notifyDataSetChanged();
+                }else{
+                    models1.addAll(models);
+                    edulistview = new EducationListview(getActivity(), models1);
+                    listView.setAdapter(edulistview);
+                    edulistview.notifyDataSetChanged();
+                }
+
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
         }
         return itemView;
     }
@@ -140,18 +185,48 @@ public class EducationQualification extends Fragment implements View.OnClickList
                          radioButton1 = (RadioButton) dialogView.findViewById(selectedId);
                          radioButton2 = (RadioButton) dialogView.findViewById(selectedId1);
                         try{
+                            String pv = "^\\d{1,9}(\\.\\d{1,2})$";
                             String percentageType = radioButton1.getText().toString();
                             String graduationType = radioButton2.getText().toString();
+
                             String qualification = qualificatioN.getEditText().getText().toString();
                             String institutE = institute.getEditText().getText().toString();
                             String borunI = boruni.getEditText().getText().toString();
                             String percga = percentagecgpa.getEditText().getText().toString();
+                            String kept = null;
+                            try{
+                                kept = percga.substring( 0, percga.indexOf("."));
+                            }catch (StringIndexOutOfBoundsException e){
+                                e.printStackTrace();
+                            }
+
                             String payear = passingyear.getEditText().getText().toString();
                             if(percentageType==null||percentageType==""||graduationType==null||graduationType==""||qualification==null||qualification==""||institutE==""||institutE==null||borunI==null||borunI==""||percga==null||percga==""||payear==null||payear==""){
                                 Toast.makeText(getContext(),"Should Be Fill All Fields",Toast.LENGTH_LONG).show();
-                            }else{
-                                saveDetails(qualification,institutE,borunI,percga,payear,percentageType,graduationType);
-                                alertDialog.dismiss();
+                            }else if(percentageType.equals("Percentage")){
+                                if(!percga.matches(pv)){
+                                    AlertDailogManager dailogManager = new AlertDailogManager();
+                                    dailogManager.showAlertDialog(getContext(),"Enter Accurate Percentage",false);
+                                }else if(kept.length()>2){
+                                    AlertDailogManager dailogManager = new AlertDailogManager();
+                                    dailogManager.showAlertDialog(getContext(),"Enter Accurate Percentage",false);
+                                }else{
+                                    saveDetails(qualification,institutE,borunI,percga,payear,percentageType,graduationType);
+                                    alertDialog.dismiss();
+                                }
+
+                            }else if(percentageType.equals("CGPA")){
+                                if(Float.parseFloat(percga)>10){
+                                    AlertDailogManager dailogManager = new AlertDailogManager();
+                                    dailogManager.showAlertDialog(getContext(),"Enter Accurate Percentage",false);
+                                }else if(!percga.matches(pv)){
+                                    AlertDailogManager dailogManager = new AlertDailogManager();
+                                    dailogManager.showAlertDialog(getContext(),"Enter Accurate Percentage",false);
+                                }else{
+                                    saveDetails(qualification,institutE,borunI,percga,payear,percentageType,graduationType);
+                                    alertDialog.dismiss();
+                                }
+
                             }
                         }catch (NullPointerException e){
                             e.printStackTrace();
@@ -178,10 +253,34 @@ public class EducationQualification extends Fragment implements View.OnClickList
         educationModel.setPassingYear(payear);
         educationModel.setGradingType(percentageType);
         educationModel.setGraduationType(graduationType);
-        models.add(educationModel);
-        edulistview = new EducationListview(getActivity(), models);
-        listView.setAdapter(edulistview);
-        edulistview.notifyDataSetInvalidated();
+        if(itemId==null){
+            models.add(educationModel);
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(models);
+            prefsEditor.putString("EduList", json);
+            prefsEditor.commit();
+            edulistview = new EducationListview(getActivity(), models);
+            listView.setAdapter(edulistview);
+            edulistview.notifyDataSetInvalidated();
+        }else{
+            models.removeAll(models1);
+            models.add(educationModel);
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(models);
+            prefsEditor.putString("EduList", json);
+            prefsEditor.commit();
+            models.addAll(models1);
+            edulistview = new EducationListview(getActivity(), models);
+            models1.add(educationModel);
+            listView.setAdapter(edulistview);
+            edulistview.notifyDataSetInvalidated();
+        }
 
     }
  }

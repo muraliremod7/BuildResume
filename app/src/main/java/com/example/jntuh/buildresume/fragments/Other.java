@@ -1,6 +1,8 @@
 package com.example.jntuh.buildresume.fragments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -17,7 +19,10 @@ import com.example.jntuh.buildresume.adapter.OthersListview;
 import com.example.jntuh.buildresume.model.OthersModel;
 import com.example.jntuh.buildresume.model.SaveDataModel;
 import com.example.jntuh.buildresume.realm.RealmController;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import io.realm.Realm;
@@ -26,14 +31,19 @@ import io.realm.Realm;
 public class Other extends Fragment implements View.OnClickListener{
     public Button addskills,addach,addhobbys,addlan;
     public ListView addSkillslv,addAchlv,addHobbyslv,addLanlv;
-    public  static ArrayList<OthersModel> detailModels ;
-    public  static ArrayList<OthersModel> detailModels1 ;
-    public  static ArrayList<OthersModel> detailModels2 ;
-    public  static ArrayList<OthersModel> detailModels3 ;
+    public  static ArrayList<OthersModel> detailModels = new ArrayList<>();
+    public  static ArrayList<OthersModel> detailModels1 = new ArrayList<>();
+    public  static ArrayList<OthersModel> detailModels2 = new ArrayList<>();
+    public  static ArrayList<OthersModel> detailModels3 = new ArrayList<>();
+    public  static ArrayList<OthersModel> detailModelsup;
+    public  static ArrayList<OthersModel> detailModels1up;
+    public  static ArrayList<OthersModel> detailModels2up;
+    public  static ArrayList<OthersModel> detailModels3up;
     public OthersListview othersListview;
     public OthersListview othersListview1;
     public OthersListview othersListview2;
     public OthersListview othersListview3;
+    String itemId;
     private Realm realm;
     public Other() {
         // Required empty public constructor
@@ -55,7 +65,7 @@ public class Other extends Fragment implements View.OnClickListener{
         addHobbyslv = (ListView)itemView.findViewById(R.id.addhobbyslistview);
         addLanlv = (ListView)itemView.findViewById(R.id.addlanlistview);
 
-        String itemId = ScrollableTabsActivity.itemid;
+         itemId = ScrollableTabsActivity.itemid;
 
         addskills = (Button)itemView.findViewById(R.id.addskills);
         addskills.setOnClickListener(this);
@@ -66,47 +76,180 @@ public class Other extends Fragment implements View.OnClickListener{
         addlan = (Button)itemView.findViewById(R.id.addlan);
         addlan.setOnClickListener(this);
         this.realm = RealmController.with(this).getRealm();
-        detailModels = new ArrayList<OthersModel>();
-        detailModels1 = new ArrayList<OthersModel>();
-        detailModels2 = new ArrayList<OthersModel>();
-        detailModels3 = new ArrayList<OthersModel>();
 
-        othersListview = new OthersListview(getActivity(),detailModels);
-        othersListview1 = new OthersListview(getActivity(),detailModels1);
-        othersListview2 = new OthersListview(getActivity(),detailModels2);
-        othersListview3 = new OthersListview(getActivity(),detailModels3);
-
-        addSkillslv.setAdapter(othersListview3);
-        addAchlv.setAdapter(othersListview2);
-        addHobbyslv.setAdapter(othersListview1);
-        addLanlv.setAdapter(othersListview);
         if(itemId==null){
+            try{
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("Lanlist", null);
+                Type type = new TypeToken<ArrayList<OthersModel>>() {}.getType();
+                detailModels = gson.fromJson(json, type);
 
+                if(detailModels==null){
+                    detailModels = new ArrayList<>();
+                }else{
+                    othersListview = new OthersListview(getActivity(), detailModels);
+                    addSkillslv.setAdapter(othersListview);
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+            try{
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("Hobbyslist", null);
+                Type type = new TypeToken<ArrayList<OthersModel>>() {}.getType();
+                detailModels1 = gson.fromJson(json, type);
+
+                if(detailModels1==null){
+                    detailModels1 = new ArrayList<>();
+                }else{
+                    othersListview1 = new OthersListview(getActivity(), detailModels1);
+                    addAchlv.setAdapter(othersListview1);
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+            try{
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("Achlist", null);
+                Type type = new TypeToken<ArrayList<OthersModel>>() {}.getType();
+                detailModels2 = gson.fromJson(json, type);
+
+                if(detailModels2==null){
+                    detailModels2 = new ArrayList<>();
+                }else{
+                    othersListview2 = new OthersListview(getActivity(), detailModels2);
+                    addHobbyslv.setAdapter(othersListview2);
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+            try{
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("Skillslist", null);
+                Type type = new TypeToken<ArrayList<OthersModel>>() {}.getType();
+                detailModels3 = gson.fromJson(json, type);
+
+                if(detailModels3==null){
+                    detailModels3 = new ArrayList<>();
+                }else{
+                    othersListview3 = new OthersListview(getActivity(), detailModels3);
+                    addLanlv.setAdapter(othersListview3);
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
         }else {
-            RealmController controller = new RealmController(getActivity().getApplication());
+
             SaveDataModel saveDataModels = realm.where(SaveDataModel.class).equalTo("id", Integer.parseInt(itemId)).findFirst();
-            detailModels = new ArrayList<>(saveDataModels.getOthersModelsskills());
-            detailModels1 = new ArrayList<>(saveDataModels.getOthersModelsache());
-            detailModels2 = new ArrayList<>(saveDataModels.getOthersModelshobbys());
-            detailModels3 = new ArrayList<>(saveDataModels.getOthersModelslan());
-
-            othersListview = new OthersListview(getActivity(), detailModels);
+            detailModelsup = new ArrayList<>(saveDataModels.getOthersModelsskills());
+            othersListview = new OthersListview(getActivity(), detailModelsup);
             addLanlv.setAdapter(othersListview);
-            othersListview3.notifyDataSetInvalidated();
+            othersListview.notifyDataSetChanged();
+
+            try{
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("Lanlist", null);
+                Type type = new TypeToken<ArrayList<OthersModel>>() {}.getType();
+                detailModels = gson.fromJson(json, type);
+
+                if(detailModels==null){
+                    detailModels = new ArrayList<>();
+                    othersListview = new OthersListview(getActivity(), detailModelsup);
+                    addLanlv.setAdapter(othersListview);
+                    othersListview.notifyDataSetChanged();
+                }else{
+                    detailModelsup.addAll(detailModels);
+                    othersListview = new OthersListview(getActivity(), detailModelsup);
+                    addLanlv.setAdapter(othersListview);
+                    othersListview.notifyDataSetChanged();
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
 
 
-            othersListview1 = new OthersListview(getActivity(), detailModels1);
+            detailModels1up = new ArrayList<>(saveDataModels.getOthersModelsache());
+            othersListview1 = new OthersListview(getActivity(), detailModels1up);
             addHobbyslv.setAdapter(othersListview1);
-            othersListview2.notifyDataSetInvalidated();
-
-
-            othersListview2 = new OthersListview(getActivity(), detailModels2);
-            addAchlv.setAdapter(othersListview2);
             othersListview1.notifyDataSetInvalidated();
 
-            othersListview3 = new OthersListview(getActivity(), detailModels3);
+            try{
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("Hobbyslist", null);
+                Type type = new TypeToken<ArrayList<OthersModel>>() {}.getType();
+                detailModels1 = gson.fromJson(json, type);
+
+                if(detailModels1==null){
+                    detailModels1 = new ArrayList<>();
+                    othersListview1 = new OthersListview(getActivity(), detailModels1up);
+                    addHobbyslv.setAdapter(othersListview1);
+                    othersListview1.notifyDataSetInvalidated();
+                }else{
+                    detailModels1up.addAll(detailModels1);
+                    othersListview1 = new OthersListview(getActivity(), detailModels1up);
+                    addHobbyslv.setAdapter(othersListview1);
+                    othersListview1.notifyDataSetChanged();
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+            detailModels2up = new ArrayList<>(saveDataModels.getOthersModelshobbys());
+            othersListview2 = new OthersListview(getActivity(), detailModels2up);
+            addAchlv.setAdapter(othersListview2);
+            othersListview2.notifyDataSetInvalidated();
+            try{
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("Achlist", null);
+                Type type = new TypeToken<ArrayList<OthersModel>>() {}.getType();
+                detailModels2 = gson.fromJson(json, type);
+
+                if(detailModels2==null){
+                    detailModels2 = new ArrayList<>();
+                    othersListview2 = new OthersListview(getActivity(), detailModels2up);
+                    addAchlv.setAdapter(othersListview2);
+                    othersListview2.notifyDataSetInvalidated();
+                }else{
+                    detailModels2up.addAll(detailModels2);
+                    othersListview2 = new OthersListview(getActivity(), detailModels2up);
+                    addAchlv.setAdapter(othersListview2);
+                    othersListview2.notifyDataSetChanged();
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
+
+            detailModels3up = new ArrayList<>(saveDataModels.getOthersModelslan());
+            othersListview3 = new OthersListview(getActivity(), detailModels3up);
             addSkillslv.setAdapter(othersListview3);
             othersListview.notifyDataSetInvalidated();
+            try{
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                Gson gson = new Gson();
+                String json = sharedPrefs.getString("Skillslist", null);
+                Type type = new TypeToken<ArrayList<OthersModel>>() {}.getType();
+                detailModels3 = gson.fromJson(json, type);
+
+                if(detailModels3==null){
+                    detailModels3 = new ArrayList<>();
+                    othersListview3 = new OthersListview(getActivity(), detailModels3up);
+                    addSkillslv.setAdapter(othersListview3);
+                    othersListview3.notifyDataSetInvalidated();
+                }else{
+                    detailModels3up.addAll(detailModels3);
+                    othersListview3 = new OthersListview(getActivity(), detailModels3up);
+                    addSkillslv.setAdapter(othersListview3);
+                    othersListview3.notifyDataSetChanged();
+                }
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
         };
         return itemView;
     }
@@ -188,30 +331,135 @@ public class Other extends Fragment implements View.OnClickListener{
     private void otherssaveskills(String qualification) {
         OthersModel othersModel = new OthersModel();
         othersModel.setValue(qualification);
-        detailModels.add(othersModel);
-        addLanlv.setAdapter(othersListview);
-        othersListview.notifyDataSetInvalidated();
+        if(itemId==null){
+            detailModels.add(othersModel);
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(detailModels);
+            prefsEditor.putString("Lanlist", json);
+            prefsEditor.commit();
+            othersListview = new OthersListview(getActivity(),detailModels);
+            addLanlv.setAdapter(othersListview);
+            othersListview.notifyDataSetInvalidated();
+        }else{
+            detailModels.removeAll(detailModelsup);
+            detailModels.add(othersModel);
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(detailModels);
+            prefsEditor.putString("Lanlist", json);
+            prefsEditor.commit();
+            detailModels.addAll(detailModelsup);
+            othersListview = new OthersListview(getActivity(),detailModels);
+            detailModelsup.add(othersModel);
+            addLanlv.setAdapter(othersListview);
+            othersListview.notifyDataSetInvalidated();
+        }
+
     }
+
     private void otherssaveache(String qualification) {
         OthersModel othersModel = new OthersModel();
         othersModel.setValue(qualification);
-        detailModels1.add(othersModel);
-        addHobbyslv.setAdapter(othersListview1);
-        othersListview1.notifyDataSetInvalidated();
+        if(itemId==null){
+            detailModels1.add(othersModel);
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(detailModels1);
+            prefsEditor.putString("Hobbyslist", json);
+            prefsEditor.commit();
+            othersListview1 = new OthersListview(getActivity(),detailModels1);
+            addHobbyslv.setAdapter(othersListview1);
+            othersListview1.notifyDataSetInvalidated();
+        }else {
+            detailModels1.removeAll(detailModels1up);
+            detailModels1.add(othersModel);
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(detailModels1);
+            prefsEditor.putString("Hobbyslist", json);
+            prefsEditor.commit();
+            detailModels1.addAll(detailModels1up);
+            othersListview1 = new OthersListview(getActivity(),detailModels1);
+            detailModels1up.add(othersModel);
+            addHobbyslv.setAdapter(othersListview1);
+            othersListview1.notifyDataSetInvalidated();
+        }
+
     }
+
     private void otherssavehobbys(String qualification) {
         OthersModel othersModel = new OthersModel();
         othersModel.setValue(qualification);
-        detailModels2.add(othersModel);
-        addAchlv.setAdapter(othersListview2);
-        othersListview2.notifyDataSetInvalidated();
+        if(itemId==null){
+            detailModels2.add(othersModel);
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(detailModels2);
+            prefsEditor.putString("Achlist", json);
+            prefsEditor.commit();
+            othersListview2 = new OthersListview(getActivity(),detailModels2);
+            addAchlv.setAdapter(othersListview2);
+            othersListview2.notifyDataSetInvalidated();
+        }else {
+            detailModels2.removeAll(detailModels2up);
+            detailModels2.add(othersModel);
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(detailModels2);
+            prefsEditor.putString("Achlist", json);
+            prefsEditor.commit();
+            detailModels2.addAll(detailModels2up);
+            othersListview2 = new OthersListview(getActivity(),detailModels2);
+            detailModels2up.add(othersModel);
+            addAchlv.setAdapter(othersListview2);
+            othersListview2.notifyDataSetInvalidated();
+        }
+
     }
+
     private void otherssavelan(String qualification) {
         OthersModel othersModel = new OthersModel();
         othersModel.setValue(qualification);
-        detailModels3.add(othersModel);
-        addSkillslv.setAdapter(othersListview3);
-        othersListview3.notifyDataSetInvalidated();
+        if(itemId==null){
+            detailModels3.add(othersModel);
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(detailModels3);
+            prefsEditor.putString("Skillslist", json);
+            prefsEditor.commit();
+            othersListview3 = new OthersListview(getActivity(),detailModels3);
+            addSkillslv.setAdapter(othersListview3);
+            othersListview3.notifyDataSetInvalidated();
+        }else {
+            detailModels3.removeAll(detailModels3up);
+            detailModels3.add(othersModel);
+            SharedPreferences appSharedPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(detailModels3);
+            prefsEditor.putString("Skillslist", json);
+            prefsEditor.commit();
+            detailModels3.addAll(detailModels3up);
+            othersListview3 = new OthersListview(getActivity(),detailModels3);
+            detailModels3up.add(othersModel);
+            addSkillslv.setAdapter(othersListview3);
+            othersListview3.notifyDataSetInvalidated();
+        }
     }
-
 }

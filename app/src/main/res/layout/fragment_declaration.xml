@@ -2,8 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="50dp"
-    tools:context="info.androidhive.materialtabs.fragments.EightFragment">
+    android:paddingBottom="50dp">
     <android.support.design.widget.TextInputLayout
         android:id="@+id/declaration"
         android:layout_width="match_parent"
@@ -11,7 +10,6 @@
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
-
         <EditText
             android:id="@+id/declarationedit"
             android:layout_width="match_parent"
