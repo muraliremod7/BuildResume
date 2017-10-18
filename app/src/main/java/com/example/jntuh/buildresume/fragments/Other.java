@@ -89,7 +89,8 @@ public class Other extends Fragment implements View.OnClickListener{
                     detailModels = new ArrayList<>();
                 }else{
                     othersListview = new OthersListview(getActivity(), detailModels);
-                    addSkillslv.setAdapter(othersListview);
+                    addLanlv.setAdapter(othersListview);
+                    othersListview.notifyDataSetChanged();
                 }
             }catch (NullPointerException e){
                 e.printStackTrace();
@@ -105,7 +106,8 @@ public class Other extends Fragment implements View.OnClickListener{
                     detailModels1 = new ArrayList<>();
                 }else{
                     othersListview1 = new OthersListview(getActivity(), detailModels1);
-                    addAchlv.setAdapter(othersListview1);
+                    addHobbyslv.setAdapter(othersListview1);
+                    othersListview1.notifyDataSetChanged();
                 }
             }catch (NullPointerException e){
                 e.printStackTrace();
@@ -121,7 +123,8 @@ public class Other extends Fragment implements View.OnClickListener{
                     detailModels2 = new ArrayList<>();
                 }else{
                     othersListview2 = new OthersListview(getActivity(), detailModels2);
-                    addHobbyslv.setAdapter(othersListview2);
+                    addAchlv.setAdapter(othersListview2);
+                    othersListview2.notifyDataSetChanged();
                 }
             }catch (NullPointerException e){
                 e.printStackTrace();
@@ -137,7 +140,8 @@ public class Other extends Fragment implements View.OnClickListener{
                     detailModels3 = new ArrayList<>();
                 }else{
                     othersListview3 = new OthersListview(getActivity(), detailModels3);
-                    addLanlv.setAdapter(othersListview3);
+                    addSkillslv.setAdapter(othersListview3);
+                    othersListview3.notifyDataSetChanged();
                 }
             }catch (NullPointerException e){
                 e.printStackTrace();

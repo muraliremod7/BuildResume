@@ -2,14 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="50dp">
+    android:paddingBottom="50dp"
+    android:fitsSystemWindows="true">
     <android.support.design.widget.TextInputLayout
         android:id="@+id/declaration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="88dp">
         <EditText
             android:id="@+id/declarationedit"
             android:layout_width="match_parent"

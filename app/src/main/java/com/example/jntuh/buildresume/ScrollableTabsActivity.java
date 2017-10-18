@@ -19,6 +19,8 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.jntuh.buildresume.fragments.Declaration;
@@ -66,6 +68,7 @@ public class ScrollableTabsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_scrollable_tabs);
         this.realm = RealmController.with(this).getRealm();
         toolbar = (Toolbar) findViewById(R.id.toolbar);

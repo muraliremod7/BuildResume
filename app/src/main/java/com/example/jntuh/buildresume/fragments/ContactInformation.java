@@ -552,7 +552,28 @@ public class ContactInformation extends Fragment implements View.OnClickListener
         editor.putString("imagePreferance", encodeTobase64(bm));
         editor.commit();
         String previouslyEncodedImage = sharedPrefs.getString("imagePreferance", "");
-        uploadphoto.setImageBitmap(decodeBase64(previouslyEncodedImage));
+        Bitmap bitmap = getResizedBitmap(decodeBase64(previouslyEncodedImage), 500);
+        uploadphoto.setImageBitmap(bitmap);
+    }
+    /**
+     * reduces the size of the image
+     * @param image
+     * @param maxSize
+     * @return
+     */
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
     public static String encodeTobase64(Bitmap image) {
         Bitmap immage = image;
