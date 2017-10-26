@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.jntuh.buildresume.SavedResumesActivity">
+    tools:context="com.indianservers.jntuh.buildresume.com.indianservers.jntuh.SavedResumesActivity">
     <ListView
         android:padding="10dp"
         android:id="@+id/resumeslist"
