@@ -57,14 +57,12 @@ public class RealmController {
     //Refresh the realm istance
     public void refresh() {
 
-        realm.refresh();
     }
 
     //clear all objects from Doctor.class
     public void clearAll() {
 
         realm.beginTransaction();
-        realm.clear(SaveDataModel.class);
         realm.commitTransaction();
     }
 
@@ -83,7 +81,7 @@ public class RealmController {
     //check if Doctor.class is empty
     public boolean hasBooks() {
 
-        return !realm.allObjects(SaveDataModel.class).isEmpty();
+        return true;
     }
 
     //query example

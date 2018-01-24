@@ -56,7 +56,7 @@ public class ShowDataActivity extends AppCompatActivity {
 
     public void setRealmAdapter(RealmResults<SaveDataModel> books) {
 
-        RealmBooksAdapter realmAdapter = new RealmBooksAdapter(this.getApplicationContext(), books, true);
+        RealmBooksAdapter realmAdapter = new RealmBooksAdapter(books);
         // Set the data and tell the RecyclerView to draw
         adapter.setRealmAdapter(realmAdapter);
         adapter.notifyDataSetChanged();

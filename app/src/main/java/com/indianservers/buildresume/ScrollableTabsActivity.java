@@ -270,7 +270,7 @@ public class ScrollableTabsActivity extends AppCompatActivity {
         }else{
             realm.beginTransaction();
             SaveDataModel book1 = realm.where(SaveDataModel.class).equalTo("id", Integer.parseInt(itemid)).findFirst();
-            book1.removeFromRealm();
+            book1.removeAllChangeListeners();
             SaveDataModel book = new SaveDataModel();
             String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
             String email = information.email.getEditText().getText().toString();

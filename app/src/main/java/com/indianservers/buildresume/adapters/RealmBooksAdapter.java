@@ -9,8 +9,8 @@ import io.realm.RealmResults;
 
 public class RealmBooksAdapter extends RealmModelAdapter<SaveDataModel> {
 
-    public RealmBooksAdapter(Context context, RealmResults<SaveDataModel> realmResults, boolean automaticUpdate) {
+    public RealmBooksAdapter(RealmResults<SaveDataModel> realmResults) {
 
-        super(context, realmResults, automaticUpdate);
+        super(realmResults);
     }
 }

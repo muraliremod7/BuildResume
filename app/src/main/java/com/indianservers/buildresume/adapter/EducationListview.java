@@ -101,7 +101,6 @@ public class EducationListview extends ArrayAdapter<EducationModel>{
                 result=convertview;
             }
 
-
         viewHolder.qualification.setText(educationModel.getQualification());
         viewHolder.qinstitute.setText(educationModel.getInstitute());
         viewHolder.board.setText(educationModel.getBoardUniversity());

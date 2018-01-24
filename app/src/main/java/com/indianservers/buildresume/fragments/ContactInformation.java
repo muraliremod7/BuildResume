@@ -589,7 +589,7 @@ public class ContactInformation extends Fragment implements View.OnClickListener
         byte[] decodedByte = Base64.decode(input, 0);
         return BitmapFactory
                 .decodeByteArray(decodedByte, 0, decodedByte.length);
-    }
+}
 
     @SuppressWarnings("deprecation")
     private void onSelectFromGalleryResult1(Intent data) {

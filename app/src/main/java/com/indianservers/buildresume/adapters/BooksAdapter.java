@@ -62,10 +62,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
+import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
@@ -138,7 +141,7 @@ public class BooksAdapter extends RealmRecyclerViewAdapter<SaveDataModel> {
                 alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int id) {
-                        RealmResults<SaveDataModel> results = realm.where(SaveDataModel.class).findAll();
+                        OrderedRealmCollection<SaveDataModel> results = realm.where(SaveDataModel.class).findAll();
                         // All changes to data must happen in a transaction
                         realm.beginTransaction();
                         results.get(position).getEducationModels().clear();
@@ -149,7 +152,7 @@ public class BooksAdapter extends RealmRecyclerViewAdapter<SaveDataModel> {
                         results.get(position).getOthersModelsskills().clear();
                         results.get(position).getOthersModelslan().clear();
                         results.get(position).getReferencesModels().clear();
-                        results.remove(position);
+                        results.deleteFromRealm(position);
                         notifyItemRemoved(position);
                         realm.commitTransaction();
 
@@ -257,6 +260,8 @@ public class BooksAdapter extends RealmRecyclerViewAdapter<SaveDataModel> {
                                                 formateone(book);
                                             }else if(ci==1){
                                                 formatetwo(book,position);
+                                            }else if(ci==2){
+                                                formatethree(book);
                                             }
 
                                         }
@@ -276,18 +281,17 @@ public class BooksAdapter extends RealmRecyclerViewAdapter<SaveDataModel> {
                     }
                 });
                 realertDialog.show();
-
                 }
         });
-
     }
-        private void formateone(SaveDataModel sv){
+
+    private void formateone(SaveDataModel sv){
             ProgressDialog progressDialog1 = new ProgressDialog(context);//displays the progress bar
             progressDialog1 = ProgressDialog.show(context, "",
                     "Please wait...", true);
             try {
                 //creating a directory in SD card
-                File mydir = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"
+                File mydir = new File(Environment.getExternalStorageDirectory()+"/"
                         + "BuildResume"); //PATH_PRODUCT_REPORT="/SIAS/REPORT_PRODUCT/"
                 if (!mydir.exists()) {
                     mydir.mkdirs();
@@ -362,7 +366,7 @@ public class BooksAdapter extends RealmRecyclerViewAdapter<SaveDataModel> {
                 e.printStackTrace();
             }
         }
-        private void formatetwo(SaveDataModel sv, int position){
+    private void formatetwo(SaveDataModel sv, int position){
             try {
 
                 //creating a directory in SD card
@@ -433,7 +437,62 @@ public class BooksAdapter extends RealmRecyclerViewAdapter<SaveDataModel> {
                 e.printStackTrace();
             }
         }
+    private void formatethree(SaveDataModel book) {
+        ProgressDialog progressDialog1 = new ProgressDialog(context);//displays the progress bar
+        progressDialog1 = ProgressDialog.show(context, "",
+                "Please wait...", true);
+        try {
+            //creating a directory in SD card
+            File mydir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/"
+                    + "BuildResume"); //PATH_PRODUCT_REPORT="/SIAS/REPORT_PRODUCT/"
+            if (!mydir.exists()) {
+                mydir.mkdirs();
+            }
+            //getting the full path of the PDF report name
+            String mPath = Environment.getExternalStorageDirectory().getAbsolutePath().toString() + "/"
+                    + "BuildResume" + "/"//PATH_PRODUCT_REPORT="/SIAS/REPORT_PRODUCT/"
+                    + resumeName + ".pdf"; //reportName could be any name
 
+            //constructing the PDF file
+            File pdfFile = new File(mPath);
+
+            //Creating a Document with size A4. Document class is available at  com.itextpdf.text.Document
+            Document document = new Document(PageSize.A4);
+            //assigning a PdfWriter instance to pdfWriter
+            pdfWriter = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+            pdfWriter.setInitialLeading(12.5f);
+            document.open();
+            InputStream is = context.getAssets().open("CV-Template/index.html");
+            int size = is.available();
+
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+
+            String str = new String(buffer);
+            str = str.replace("PersonName", book.getName());
+            str = str.replace("email", book.getEmail());
+            str = str.replace("mobile", book.getMobile());
+            str = str.replace("career.", book.getCareerobjective());
+
+            for (int i = 0; i < book.getExperienceModels().size(); i++) {
+                str = str.replace("peCompanyName", book.getExperienceModels().get(i).getCompanyname());
+                str = str.replace("FromWork", book.getExperienceModels().get(i).getFromwork());
+                str = str.replace("ToWork", book.getExperienceModels().get(i).getTowork());
+                str = str.replace("JobDescription", book.getExperienceModels().get(i).getJobdescription());
+            }
+            InputStream iss = new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8));
+            XMLWorkerHelper.getInstance().parseXHtml(pdfWriter, document,iss);
+            document.close();
+            progressDialog1.dismiss();
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     //formate one data=====================================================================
     private void addsign(Document document, Bitmap id) throws IOException, DocumentException {
 
@@ -1149,7 +1208,8 @@ public class BooksAdapter extends RealmRecyclerViewAdapter<SaveDataModel> {
         LayoutInflater mLayoutInflater;
         int[] mResources = {
                 R.drawable.formatone,
-                R.drawable.formattwo
+                R.drawable.formattwo,
+                R.drawable.formatone
 
         };
         public CustomPagerAdapter(Context context) {
